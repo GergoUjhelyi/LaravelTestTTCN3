@@ -1,0 +1,80 @@
+module JSON {
+
+//====================Types to define JSON Schemas =================================
+// JSON Number type (generic)
+type float Number (!-infinity .. !infinity) with {
+  variant "JSON:number"
+}
+
+// Integer type
+type integer Integer (-infinity .. infinity) with {
+  variant "JSON:integer"
+}
+
+// String type
+type universal charstring String with {
+  variant "JSON:string"
+}
+
+// Array type
+type record of JSON.Values Array with {
+  variant "JSON:array"
+}
+
+// Subsidiary array types
+type record of JSON.String StrArray with {
+  variant "JSON:array"
+}
+type record of JSON.Number NumArray with {
+  variant "JSON:array"
+}
+type record of JSON.Integer IntArray with {
+  variant "JSON:array"
+}
+type record of JSON.Bool BoolArray with {
+  variant "JSON:array"
+}
+type record of JSON.Object ObjArray with {
+  variant "JSON:array"
+}
+
+// Object member
+type record ObjectMember {
+  JSON.String name,
+  JSON.Values value_
+} with {
+  variant "JSON:objectMember"
+}
+
+// Generic JSON object type
+type record Object {
+  record length (1..infinity) of JSON.ObjectMember memberList optional
+} with {
+  variant "JSON:object"
+}
+
+type union Values {
+  JSON.String str,
+  JSON.Integer int,
+  JSON.Number num,
+  JSON.Object object,
+  JSON.StrArray strArray,
+  JSON.IntArray intArray,
+  JSON.NumArray numArray,
+  JSON.BoolArray boolArray, 
+  JSON.ObjArray objArray,
+  JSON.Array array,
+  JSON.Bool bool,
+  JSON.Null null_
+} with {
+  variant "asValue"
+}
+
+//synonym with singular naming convention
+type Values Value with { variant "asValue" }
+//JSON literals
+//When only the true and false literals are allowed
+type boolean Bool with { variant "JSON:literal" }
+//When only the null literal is allowed
+type enumerated Null { null_ } with { variant "JSON:literal" }
+} with { encode "JSON" }
