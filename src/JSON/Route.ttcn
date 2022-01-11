@@ -15,4 +15,6 @@ type record Route_obj {
 
 type record of Route_obj Route_Obj_List;
 
+const charstring route_file_default_name := "routes.json"
+
 } with { encode "JSON" }
