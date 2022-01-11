@@ -1,0 +1,18 @@
+//Laravel route JSON-TTCN3 mapping
+module Route {
+
+import from JSON all;
+
+//"action" renamed to action_str because action is a keyword in TTCN-3
+type record Route_obj {
+  String domain,
+  String method,
+  String uri,
+  String name,
+  String action_str,
+  StrArray middleware
+}
+
+type record of Route_obj Route_Obj_List;
+
+} with { encode "JSON" }
