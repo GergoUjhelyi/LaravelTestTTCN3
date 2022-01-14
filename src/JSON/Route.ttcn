@@ -3,6 +3,8 @@ module Route {
 
 import from JSON all;
 
+modulepar charstring route_file_name := "routes.json";
+
 //"action" renamed to action_str because action is a keyword in TTCN-3
 type record Route_obj {
   String domain,
@@ -15,6 +17,6 @@ type record Route_obj {
 
 type record of Route_obj Route_Obj_List;
 
-const charstring route_file_default_name := "routes.json"
+external function f_readRoutesFile(in charstring f_filename) return Route_Obj_List;
 
 } with { encode "JSON" }
