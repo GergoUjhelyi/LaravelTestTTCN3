@@ -12,9 +12,9 @@ testcase file_not_exists_1_TC() runs on Empty_CT {
     setverdict(fail, "The size should be 0!");
   }
   setverdict(pass);
-  }
-  
-  testcase file_not_exists_2_TC() runs on Empty_CT {
+}
+
+testcase file_not_exists_2_TC() runs on Empty_CT {
   var Route_Obj_List empty_list;
   empty_list := f_readRoutesFile("almafa");
   var integer empty_list_size := lengthof (empty_list);
@@ -22,9 +22,10 @@ testcase file_not_exists_1_TC() runs on Empty_CT {
     setverdict(fail, "The size should be 0!");
   }
   setverdict(pass);
-  }
-  
-    testcase file_not_exists_3_TC() runs on Empty_CT {
+}
+
+
+testcase file_not_exists_3_TC() runs on Empty_CT {
   var Route_Obj_List empty_list;
   empty_list := f_readRoutesFile("routes.txt");
   var integer empty_list_size := lengthof (empty_list);
@@ -32,5 +33,5 @@ testcase file_not_exists_1_TC() runs on Empty_CT {
     setverdict(fail, "The size should be 0!");
   }
   setverdict(pass);
-  }
+}
 }
