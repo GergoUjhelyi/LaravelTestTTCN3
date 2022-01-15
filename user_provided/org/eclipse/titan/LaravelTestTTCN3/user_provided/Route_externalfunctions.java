@@ -35,7 +35,7 @@ public class Route_externalfunctions {
 		}
 		JSONArray routesArray = new JSONArray(fileContent);
 		if (routesArray.isEmpty()) {
-			TtcnError.TtcnWarning("Empty or null array given from JSONArray. Return an empty record of!");
+			TtcnError.TtcnWarning("Empty array given from JSONArray. Return an empty record of!");
 			return new Route__Obj__List(TitanNull_Type.NULL_VALUE);
 		}
 		//Need initialized list inside of the Route__Obj__List object
