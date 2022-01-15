@@ -25,7 +25,7 @@ testcase file_not_exists_2_TC() runs on Empty_CT {
 }
 
 
-testcase file_not_exists_3_TC() runs on Empty_CT {
+testcase file_exists_1_TC() runs on Empty_CT {
   var Route_Obj_List empty_list;
   empty_list := f_readRoutesFile("routes.txt");
   var integer empty_list_size := lengthof (empty_list);
