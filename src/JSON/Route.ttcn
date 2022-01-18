@@ -23,7 +23,7 @@ external function f_readRoutesFile(in charstring f_filename) return Route_Obj_Li
 function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMessage {
   var HTTPMessage generatedMessage;
   var HTTPRequest request;
-  //generate uri
+  //uri
   if (isvalue(p_route_record.domain)) {
     request.uri := p_route_record.domain;
   }
@@ -34,7 +34,7 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
       request.uri := p_route_record.uri;
     }
   }
-  //generate method
+  //method
   if (isvalue(p_route_record.method)) {
     request.method := p_route_record.method;
   }
@@ -42,6 +42,9 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
   //HTTP version - 1.1
   request.version_major:= 1;
   request.version_minor:= 1;
+  
+  //client ID
+  request.client_id := omit;
   
   //TODO: Add header
   
