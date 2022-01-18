@@ -12,7 +12,7 @@ type integer Integer (-infinity .. infinity) with {
 }
 
 // String type
-type universal charstring String with {
+type charstring String with {
   variant "JSON:string"
 }
 
