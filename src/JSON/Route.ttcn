@@ -46,7 +46,11 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
   //client ID
   request.client_id := omit;
   
-  //TODO: Add header
+  //TODO: maybe more header line needed
+  request.header := {
+  { header_name:= "Connection", header_value := "keep-alive"}
+  
+  };
   
   generatedMessage := { request:= request };
   return generatedMessage;
