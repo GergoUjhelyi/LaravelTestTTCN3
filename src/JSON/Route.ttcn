@@ -54,7 +54,7 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
   { header_name:= "Connection", header_value:= "keep-alive" },
   { header_name:= "Accept-Encoding", header_value:= "gzip, deflate, br" },
   //Accept HTML and JSON MIME type for now
-  { header_name:= "Accept", header_value:=  "text/html, application/json"}
+  { header_name:= "Accept", header_value:=  "text/html, application/json, application/javascript"}
   };
   
   //body
