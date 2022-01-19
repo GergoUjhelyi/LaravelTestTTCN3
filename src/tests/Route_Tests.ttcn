@@ -1,4 +1,4 @@
-module RouteTests {
+module Route_Tests {
 
 import from Route all;
 
