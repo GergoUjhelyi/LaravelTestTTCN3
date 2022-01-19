@@ -1,3 +1,18 @@
 module HTTP_Tests {
 
+import from HTTPmsg_Types all;
+import from HTTPmsg_PortType all;
+
+//Default server parameters
+modulepar charstring HttpServerHost := "localhost";
+modulepar integer HttpServerPort := 8000;
+modulepar boolean HttpServerUseSSL := false;
+
+
+type component Empty_CT {};
+
+type component HTTP_client {
+  port HTTPmsg_PT client_port;
+}
+
 }
