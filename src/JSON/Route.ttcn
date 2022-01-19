@@ -5,6 +5,8 @@ import from JSON all;
 import from HTTPmsg_Types all;
 
 modulepar charstring route_file_name := "routes.json";
+modulepar integer HTTP_version_major := 1;
+modulepar integer HTTP_version_minor := 1;
 
 //"action" renamed to action_str because action is a keyword in TTCN-3
 type record Route_obj {
@@ -40,8 +42,8 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
   }
   
   //HTTP version - 1.1
-  request.version_major:= 1;
-  request.version_minor:= 1;
+  request.version_major:= HTTP_version_major;
+  request.version_minor:= HTTP_version_minor;
   
   //client ID
   request.client_id := omit;
