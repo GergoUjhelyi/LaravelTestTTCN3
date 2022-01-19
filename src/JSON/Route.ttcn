@@ -46,6 +46,7 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
   //client ID
   request.client_id := omit;
   
+  //header
   //TODO: maybe more header line needed
   request.header := {
   { header_name:= "Connection", header_value:= "keep-alive" },
@@ -53,6 +54,9 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
   //Accept any MIME type for now
   { header_name:= "Accept", header_value:=  "*/*"}
   };
+  
+  //body
+  request.body:= "";
   
   generatedMessage := { request:= request };
   return generatedMessage;
