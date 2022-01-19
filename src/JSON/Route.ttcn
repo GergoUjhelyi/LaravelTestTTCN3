@@ -48,8 +48,10 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
   
   //TODO: maybe more header line needed
   request.header := {
-  { header_name:= "Connection", header_value := "keep-alive"}
-  
+  { header_name:= "Connection", header_value:= "keep-alive" },
+  { header_name:= "Accept-Encoding", header_value:= "gzip, deflate, br" },
+  //Accept any MIME type for now
+  { header_name:= "Accept", header_value:=  "*/*"}
   };
   
   generatedMessage := { request:= request };
