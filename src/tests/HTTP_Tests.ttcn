@@ -2,17 +2,83 @@ module HTTP_Tests {
 
 import from HTTPmsg_Types all;
 import from HTTPmsg_PortType all;
+import from Route all;
 
 //Default server parameters
 modulepar charstring HttpServerHost := "localhost";
 modulepar integer HttpServerPort := 8000;
 modulepar boolean HttpServerUseSSL := false;
 
-
 type component Empty_CT {};
 
 type component HTTP_client {
   port HTTPmsg_PT client_port;
+};
+
+//this template will match any HTTPResponse type value in a HTTPMessage
+template HTTPMessage recv_resp := { response := ? };
+
+//this template will match any HTTP_erronous_msg type value in a HTTPMessage
+template HTTPMessage recv_err := { erronous_msg := ? };
+
+template Half_close half_close := { client_id := ? };
+
+//TODO: rename it GET/HEAD test
+testcase single_TC() runs on HTTP_client {
+  var Route_Obj_List list;
+  list := f_readRoutesFile("routes.txt");
+  var integer list_size := lengthof (list);
+  if (list_size <= 0) {
+    setverdict(fail, "The size should be over 0!");
+  }
+  
+  var Connect connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
+  var Close close_message := { client_id:= omit };
+  
+  //Map to server
+  map(self:client_port, system:client_port);
+  
+  //Send HTTP connection
+  client_port.send(connection_message);
+  
+  for(var integer i:=0; i < list_size; i := i + 1) {
+    var HTTPMessage generated_message := f_convertRouteObjectToHTTP(list[i]);
+    log(generated_message);
+   
+    timer T_timer := 4.0;
+    
+    //Send generated HTTP request
+    client_port.send(generated_message);
+    
+    if (T_timer.running) {
+      T_timer.stop;
+    }
+    
+    T_timer.start;
+    
+    alt {
+      //Receive a HTTP response
+      [] client_port.receive(recv_resp) {
+        //client_port.send(close_message);
+        setverdict(pass);
+      }
+      //Receive a Half_Close response
+      [] client_port.receive(half_close) {
+        //client_port.send(close_message);
+        setverdict(fail);
+      }
+      //Receive something else
+      [] client_port.receive {
+        //client_port.send(close_message);
+        setverdict(fail);
+      }
+      [] T_timer.timeout {
+        setverdict(fail);
+      }
+    };
+  }
+      //Unmap from server
+    unmap(self:client_port, system:client_port);
 }
 
 }
