@@ -40,11 +40,11 @@ public class Route_externalfunctions {
 		}
 		//Need initialized list inside of the Route__Obj__List object
 		Route__Obj__List list = new Route__Obj__List(TitanNull_Type.NULL_VALUE);
-		
+
 		for (int i = 0; i < routesArray.length(); i++) {
 			JSONObject JSONRouteObject = routesArray.getJSONObject(i);
 			Route__obj ttcnRouteObject = new Route__obj();
-			
+
 			//Assignment
 			if (!JSONRouteObject.isNull("domain")) {
 				ttcnRouteObject.get_field_domain().operator_assign(JSONRouteObject.getString("domain"));
@@ -53,7 +53,13 @@ public class Route_externalfunctions {
 				ttcnRouteObject.get_field_method().operator_assign(JSONRouteObject.getString("method"));
 			}
 			if (!JSONRouteObject.isNull("uri")) {
-				ttcnRouteObject.get_field_uri().operator_assign(JSONRouteObject.getString("uri"));
+
+				String uri = JSONRouteObject.getString("uri");
+				if (!uri.equals("/")) {
+					ttcnRouteObject.get_field_uri().operator_assign('/' + JSONRouteObject.getString("uri"));
+				} else {
+					ttcnRouteObject.get_field_uri().operator_assign(JSONRouteObject.getString("uri"));
+				}
 			}
 			if (!JSONRouteObject.isNull("name")) {
 				ttcnRouteObject.get_field_name().operator_assign(JSONRouteObject.getString("name"));
