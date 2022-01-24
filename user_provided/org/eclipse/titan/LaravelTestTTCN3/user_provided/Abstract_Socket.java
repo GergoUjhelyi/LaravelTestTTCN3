@@ -501,7 +501,7 @@ public abstract class Abstract_Socket {
 			if (server_mode) {
 				open_listen_port(local_host_name, localPort);
 			} else {
-				open_client_connection(remote_host_name, remotePort, local_host_name, localPort);
+				//open_client_connection(remote_host_name, remotePort, local_host_name, localPort);
 			}
 		}
 
@@ -1010,7 +1010,8 @@ public abstract class Abstract_Socket {
 		log_debug("entering Abstract_Socket.remove_client(%s)", fd.toString());
 		if (!fd.equals(listen_fd)) {
 			get_peer(fd, false);
-			Add_Fd_Read_Handler(fd);
+			//TODO: possible CancelledKeyException
+			//Add_Fd_Read_Handler(fd);
 			Remove_Fd_All_Handlers(fd);
 			remove_user_data(fd);
 			get_peer(fd, false).fd_buff = null;
