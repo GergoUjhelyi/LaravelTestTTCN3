@@ -38,10 +38,11 @@ testcase single_TC() runs on HTTP_client {
   //Map to server
   map(self:client_port, system:client_port);
   
-  //Send HTTP connection
-  client_port.send(connection_message);
+
   
   for(var integer i:=0; i < list_size; i := i + 1) {
+    //Send HTTP connection
+  	client_port.send(connection_message);
     var HTTPMessage generated_message := f_convertRouteObjectToHTTP(list[i]);
     log(generated_message);
    
@@ -59,23 +60,27 @@ testcase single_TC() runs on HTTP_client {
     alt {
       //Receive a HTTP response
       [] client_port.receive(recv_resp) {
-        //client_port.send(close_message);
+        client_port.send(close_message);
+        T_timer.stop;
         setverdict(pass);
       }
       //Receive a Half_Close response
       [] client_port.receive(half_close) {
-        //client_port.send(close_message);
+        client_port.send(close_message);
+        T_timer.stop;
         setverdict(fail);
       }
       //Receive something else
       [] client_port.receive {
-        //client_port.send(close_message);
+        client_port.send(close_message);
+        T_timer.stop;
         setverdict(fail);
       }
       [] T_timer.timeout {
         setverdict(fail);
       }
     };
+    //client_port.send(close_message);
   }
       //Unmap from server
     unmap(self:client_port, system:client_port);
