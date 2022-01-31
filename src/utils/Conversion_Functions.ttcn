@@ -1,3 +1,57 @@
 module Conversion_Functions {
 
+import from Route all;
+import from HTTPmsg_Types all;
+
+external function f_readRoutesFile(in charstring f_filename) return Route_Obj_List;
+
+//TODO: maybe more header line needed
+const HeaderLines c_standard_header_lines := {
+  { header_name:= "Connection", header_value:= "keep-alive" },
+  //Accept HTML and JSON MIME type for now
+  { header_name:= "Accept", header_value:=  "text/html, application/json, application/javascript"}
+};
+
+function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMessage {
+  var HTTPMessage generatedMessage;
+  var HTTPRequest request;
+  //uri
+  if (isvalue(p_route_record.domain)) {
+    request.uri := p_route_record.domain;
+  }
+  if (isvalue(p_route_record.uri)) {
+    if (isvalue(request.uri)) {
+      request.uri := request.uri & p_route_record.uri;
+    } else {
+      request.uri := p_route_record.uri;
+    }
+  }
+  //method
+  if (isvalue(p_route_record.method)) {
+    //TODO: for now use only GET method but need a split function on method
+    if (p_route_record.method == "GET|HEAD") {
+      request.method := "GET";
+    } else {
+      request.method := p_route_record.method;
+    }
+  }
+  
+  //HTTP version - 1.1
+  request.version_major:= HTTP_version_major;
+  request.version_minor:= HTTP_version_minor;
+  
+  //client ID
+  request.client_id := omit;
+  
+  //header
+  request.header := c_standard_header_lines;
+  
+  //body
+  request.body:= "";
+  
+  generatedMessage := { request:= request };
+  return generatedMessage;
 }
+
+}
+   

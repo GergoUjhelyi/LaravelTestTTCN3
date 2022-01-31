@@ -10,12 +10,11 @@ import org.eclipse.titan.LaravelTestTTCN3.generated.Route.Route__obj;
 import org.eclipse.titan.runtime.core.TitanCharString;
 import org.eclipse.titan.runtime.core.TitanNull_Type;
 import org.eclipse.titan.runtime.core.TtcnError;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Route_externalfunctions {
-
+public class Conversion__Functions_externalfunctions {
+	
 	public static Route__Obj__List f__readRoutesFile(TitanCharString f__filename) {
 		if (!f__filename.is_bound() || f__filename.get_value().isEmpty()) {
 			//IllegalArgumentException would be good, but for testing an empty list is better

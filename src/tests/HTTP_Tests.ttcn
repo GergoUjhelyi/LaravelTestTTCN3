@@ -3,6 +3,7 @@ module HTTP_Tests {
 import from HTTPmsg_Types all;
 import from HTTPmsg_PortType all;
 import from Route all;
+import from Conversion_Functions all;
 
 //Default server parameters
 modulepar charstring HttpServerHost := "localhost";

@@ -1,6 +1,7 @@
 module Route_Tests {
 
 import from Route all;
+import from Conversion_Functions all;
 
 type component Empty_CT {}
 
