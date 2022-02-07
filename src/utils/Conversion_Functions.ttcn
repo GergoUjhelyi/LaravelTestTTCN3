@@ -3,7 +3,13 @@ module Conversion_Functions {
 import from Route all;
 import from HTTPmsg_Types all;
 
-external function f_readRoutesFile(in charstring f_filename) return Route_Obj_List;
+type record of charstring CharStringList;
+
+type record of HTTPMessage HTTPMessageList;
+
+external function f_readRoutesFile(in charstring p_filename) return Route_Obj_List;
+
+external function ef_splitMethod(in charstring p_methodString) return CharStringList;
 
 //TODO: maybe more header line needed
 const HeaderLines c_standard_header_lines := {
@@ -28,12 +34,7 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
   }
   //method
   if (isvalue(p_route_record.method)) {
-    //TODO: for now use only GET method but need a split function on method
-    if (p_route_record.method == "GET|HEAD") {
-      request.method := "GET";
-    } else {
-      request.method := p_route_record.method;
-    }
+    var CharStringList methodList := ef_splitMethod(p_route_record.method);
   }
   
   //HTTP version - 1.1

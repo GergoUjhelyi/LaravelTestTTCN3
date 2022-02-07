@@ -7,6 +7,7 @@ import java.nio.file.Path;
 
 import org.eclipse.titan.LaravelTestTTCN3.generated.Route.Route__Obj__List;
 import org.eclipse.titan.LaravelTestTTCN3.generated.Route.Route__obj;
+import org.eclipse.titan.runtime.core.PreGenRecordOf.PREGEN__RECORD__OF__CHARSTRING;
 import org.eclipse.titan.runtime.core.TitanCharString;
 import org.eclipse.titan.runtime.core.TitanNull_Type;
 import org.eclipse.titan.runtime.core.TtcnError;
@@ -76,6 +77,25 @@ public class Conversion__Functions_externalfunctions {
 			list.get_at(i).operator_assign(ttcnRouteObject);
 		}
 		return list;
+	}
+
+	public static PREGEN__RECORD__OF__CHARSTRING ef__splitMethod(final TitanCharString methodNames) {
+		if (methodNames == null) {
+			throw new TtcnError(new IllegalArgumentException("methodNames can't be null!"));
+		}
+		methodNames.must_bound("methodNames must be a value!");
+		
+		final String methodNameString = methodNames.get_value().toString();
+		final String splitOperator = "|";
+		
+		String[] splittedMethods = methodNameString.split(splitOperator);
+		PREGEN__RECORD__OF__CHARSTRING returnValue = new PREGEN__RECORD__OF__CHARSTRING(TitanNull_Type.NULL_VALUE);
+		
+		for (int i = 0; i < splittedMethods.length; i++) {
+			returnValue.get_at(i).operator_assign(splittedMethods[i]);
+		}
+		
+		return returnValue;
 	}
 
 }
