@@ -7,7 +7,7 @@ type record of charstring CharStringList;
 
 type record of HTTPMessage HTTPMessageList;
 
-external function f_readRoutesFile(in charstring p_filename) return Route_Obj_List;
+external function ef_readRoutesFile(in charstring p_filename) return Route_Obj_List;
 
 external function ef_splitMethod(in charstring p_methodString) return CharStringList;
 

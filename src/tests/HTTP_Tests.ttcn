@@ -27,7 +27,7 @@ template Half_close half_close := { client_id := ? };
 //TODO: rename it GET/HEAD test
 testcase single_TC() runs on HTTP_client {
   var Route_Obj_List list;
-  list := f_readRoutesFile("routes.txt");
+  list := ef_readRoutesFile("routes.txt");
   var integer list_size := lengthof (list);
   if (list_size <= 0) {
     setverdict(fail, "The size should be over 0!");
