@@ -46,7 +46,8 @@ public class Init__Functions_externalfunctions {
 		builder.directory(new File(directory));
 		try {
 			Process process = builder.start();
-		} catch (IOException e) {
+			process.waitFor();
+		} catch (IOException | InterruptedException e) {
 			throw new TtcnError(e);
 		}
 	}
