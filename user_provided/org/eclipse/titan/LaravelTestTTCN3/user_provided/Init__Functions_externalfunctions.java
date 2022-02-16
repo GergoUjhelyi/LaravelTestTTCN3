@@ -9,6 +9,7 @@ import org.eclipse.titan.runtime.core.TtcnError;
 
 public class Init__Functions_externalfunctions {
 
+	//Checks the input server directory
 	public static TitanBoolean ef__valid__path(TitanCharString serverDirectory) {
 		if (serverDirectory == null || !serverDirectory.is_bound()) {
 			throw new TtcnError(new IllegalArgumentException("Server directory must be bound!"));
