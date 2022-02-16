@@ -4,7 +4,10 @@ modulepar charstring server_directory := "/laravel_server";
 modulepar charstring route_file := "routes.json";
 
 external function ef_valid_path(in charstring p_server_dir_path) return boolean;
+
 external function ef_create_route_file(in charstring p_server_dir_path, in charstring p_route_file_name);
+
+external function ef_start_laravel_server(in charstring p_server_dir_path);
 
 //TODO: finish
 function f_init_route_files() {
