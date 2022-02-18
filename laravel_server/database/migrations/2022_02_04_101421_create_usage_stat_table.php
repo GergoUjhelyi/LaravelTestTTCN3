@@ -13,7 +13,7 @@ class CreateUsageStatTable extends Migration
      */
     public function up()
     {
-        Schema::create('usage_stat', function (Blueprint $table) {
+        Schema::create('usage_stats', function (Blueprint $table) {
             $table->id();
             //Titan Eclipse Usage Stat data Schema
             $table->string("plugin_id");
@@ -39,6 +39,6 @@ class CreateUsageStatTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('usage_stat');
+        Schema::dropIfExists('usage_stats');
     }
 }
