@@ -1,8 +1,8 @@
 module Route_Tests {
 
-import from Route all;
 import from Conversion_Functions all;
 import from Init_Functions all;
+import from Route all;
 
 type component Empty_CT {}
 
@@ -26,9 +26,8 @@ testcase file_not_exists_2_TC() runs on Empty_CT {
   setverdict(pass);
 }
 
-
 testcase file_exists_1_TC() runs on Empty_CT {
-  f_init_route_files()
+  f_init_route_files();
   var Route_Obj_List empty_list;
   empty_list := ef_readRoutesFile("routes.json");
   var integer empty_list_size := lengthof (empty_list);
