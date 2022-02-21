@@ -57,12 +57,12 @@ class UsageStatController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Usage_Stat  $usage_Stat
+     * @param  \App\Models\Usage_Stat  $usage_stat
      * @return \Illuminate\Http\Response
      */
-    public function show(Usage_Stat $usage_Stat)
+    public function show($id)
     {
-        //
+        return response()->json(Usage_Stat::findOrFail($id), 200);
     }
 
     /**
