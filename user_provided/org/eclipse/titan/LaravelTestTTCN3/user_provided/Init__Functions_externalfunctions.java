@@ -39,9 +39,9 @@ public class Init__Functions_externalfunctions {
 		
 		ProcessBuilder builder = new ProcessBuilder();
 		if (isWindows) {
-			builder.command("cmd.exe", "/c", String.format("php artisan route:list --json > %s/%s", System.getProperty("user.dir"), routeFile));
+			builder.command("cmd.exe", "/c", String.format("php artisan route:list --json > %s%s%s", System.getProperty("user.dir"), File.pathSeparator ,routeFile));
 		} else {
-			builder.command("sh", "-c", String.format("php artisan route:list --json > %s", routeFile));
+			builder.command("sh", "-c", String.format("php artisan route:list --json > %s%s%s", System.getProperty("user.dir"), File.pathSeparator ,routeFile));
 		}
 		builder.directory(new File(directory));
 		try {
