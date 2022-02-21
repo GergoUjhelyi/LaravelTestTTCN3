@@ -1,0 +1,71 @@
+//UsageStat type JSON-TTCN3 mapping
+module UsageStat_Type {
+
+import from JSON all;
+
+//* @member id
+//* @member plugin_id
+//* @member plugin_version_qualifier
+//* @member plugin_version
+//* @member os_version
+//* @member os_arch
+//* @member eclipse_version
+//* @member eclipse_version_qualifier
+//* @member user_id
+//* @member java_version
+//* @member os_name
+//* @member info 
+//* @member created_at DateTime When the post created at the datebase in string format. 
+//* @member updated_at DateTime When the post updated at the datebase in string format.
+type record Usage_Stat_response {
+  JSON.Integer id,
+  JSON.String plugin_id,
+  JSON.String plugin_version_qualifier,
+  JSON.String plugin_version,
+  JSON.String os_version,
+  JSON.String os_arch,
+  JSON.String eclipse_version,
+  JSON.String eclipse_version_qualifier,
+  JSON.String user_id,
+  JSON.String java_version,
+  JSON.String os_name,
+  JSON.String info,
+  JSON.String created_at,
+  JSON.String updated_at
+}
+
+type record of Usage_Stat_response Usage_Stat_Response_Array with {
+  variant "JSON:array"
+}
+
+external function ef_enc_usage_JSON(in Usage_Stat_response msg) return octetstring
+with
+{
+  extension "prototype (convert) encode(JSON)";
+  extension "printing(pretty)";
+  extension "errorbehavior(ALL:ERROR)"
+}
+
+external function ef_dec_usage_JSON(in octetstring p_stream) return Usage_Stat_response
+with
+{
+  extension "prototype (convert) decode(JSON)"
+  extension "errorbehavior(ALL:ERROR)"
+}
+
+external function ef_enc_usage_arr_JSON(in Usage_Stat_Response_Array msg) return octetstring
+with
+{
+  extension "prototype (convert) encode(JSON)";
+  extension "printing(pretty)";
+  extension "errorbehavior(ALL:ERROR)"
+}
+
+external function ef_dec_usage_arr_JSON(in octetstring p_stream) return Usage_Stat_Response_Array
+with
+{
+  extension "prototype (convert) decode(JSON)"
+  extension "errorbehavior(ALL:ERROR)"
+}
+
+} with { encode "JSON" }
