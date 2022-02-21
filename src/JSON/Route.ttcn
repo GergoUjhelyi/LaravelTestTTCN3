@@ -2,20 +2,22 @@
 module Route {
 
 import from JSON all;
-import from HTTPmsg_Types all;
 
 modulepar charstring route_file_name := "routes.json";
-modulepar integer HTTP_version_major := 1;
-modulepar integer HTTP_version_minor := 1;
 
-//"action" renamed to action_str because action is a keyword in TTCN-3
+//* @member domain The domain string, if it is null that means the domain is <code>localhost</code>
+//* @member method HTTP methods string splitted by <code>|</code> character 
+//* @member uri The server endpoint URI string
+//* @member name
+//* @member action_str Originally it is action but <code>action</code> is a TTCN-3 keyword
+//* @member middleware Laravel middlewares for this endpoint
 type record Route_obj {
-  String domain,
-  String method,
-  String uri,
-  String name,
-  String action_str,
-  StrArray middleware
+  JSON.String domain,
+  JSON.String method,
+  JSON.String uri,
+  JSON.String name,
+  JSON.String action_str,
+  JSON.StrArray middleware
 }
 
 type record of Route_obj Route_Obj_List;
