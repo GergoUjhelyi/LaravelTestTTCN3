@@ -10,4 +10,5 @@
 ### Laravel specific section:
 TODO
 ### System specific section:
-TODO
+- OS: Windows 10
+- Java version: 15
