@@ -1,16 +1,13 @@
 module HTTP_Tests {
 
-import from HTTPmsg_Types all;
 import from HTTPmsg_PortType all;
-import from Route all;
-import from Conversion_Functions all;
+import from HTTPmsg_Types all;
+import from UsageStat_Type all;
 
 //Default server parameters
 modulepar charstring HttpServerHost := "localhost";
 modulepar integer HttpServerPort := 8000;
 modulepar boolean HttpServerUseSSL := false;
-
-type component Empty_CT {};
 
 type component HTTP_client {
   port HTTPmsg_PT client_port;
@@ -22,69 +19,156 @@ template HTTPMessage recv_resp := { response := ? };
 //this template will match any HTTP_erronous_msg type value in a HTTPMessage
 template HTTPMessage recv_err := { erronous_msg := ? };
 
+//this template will match any Half_close type value
 template Half_close half_close := { client_id := ? };
 
-//TODO: rename it GET/HEAD test
-testcase single_TC() runs on HTTP_client {
-  var Route_Obj_List list;
-  list := ef_readRoutesFile("routes.txt");
-  var integer list_size := lengthof (list);
-  if (list_size <= 0) {
-    setverdict(fail, "The size should be over 0!");
+template HTTPMessage recv_ok_response := {
+  response:= {
+    client_id:= ?,
+    version_major:= 1,
+    version_minor:= 1,
+    statuscode:= 200,
+    statustext:= pattern "*OK*",
+    header:= ?,
+    body := ?
   }
-  
-  var Connect connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
-  var Close close_message := { client_id:= omit };
-  
+};
+
+//standard HTTP header for accept HTML MIME type
+const HeaderLines c_header_accept_html := {
+  { header_name:= "Connection", header_value:= "close" },
+  //Accept HTML and JSON MIME type for now
+  { header_name:= "Accept", header_value:= "text/html"}
+};
+
+//standard HTTP header for accept JSON MIME type
+const HeaderLines c_header_accept_json := {
+  { header_name:= "Connection", header_value:= "close" },
+  //Accept HTML and JSON MIME type for now
+  { header_name:= "Accept", header_value:= "application/json, application/javascript"}
+};
+
+/***************************************
+** @desc Test the main page which is a generated HTML page **
+** @verdict pass if the server is running and have a main page **
+**************************************/ 
+testcase tc_laravel_index_test() runs on HTTP_client {
+  var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
+  var Close v_close_message := { client_id:= omit };
+  var HTTPMessage v_HTTP_response;
+
   //Map to server
   map(self:client_port, system:client_port);
-  
 
-  
-  for(var integer i:=0; i < list_size; i := i + 1) {
-    //Send HTTP connection
-  	client_port.send(connection_message);
-    var HTTPMessage generated_message := f_convertRouteObjectToHTTP(list[i]);
-    log(generated_message);
-   
-    timer T_timer := 4.0;
-    
-    //Send generated HTTP request
-    client_port.send(generated_message);
-    
-    if (T_timer.running) {
+  //Send HTTP connection
+  client_port.send(v_connection_message);
+
+  //Generic HTTP request with HTML accept header
+  const HTTPMessage c_http_message := { request:= { method:= "GET", uri:= "/", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
+
+  timer T_timer := 4.0;
+
+  //Send generated HTTP request
+  client_port.send(c_http_message);
+
+  T_timer.start;
+
+  alt {
+    //Receive a HTTP message
+    [] client_port.receive(HTTPMessage:?) -> value v_HTTP_response {
+      if (match(v_HTTP_response, recv_ok_response)) {
+        setverdict(pass, "Received HTTP OK/200 response! Received: ", v_HTTP_response);
+      } else {
+        setverdict(fail, "Received wrong response! Received: ", v_HTTP_response);
+      }
+      client_port.send(v_close_message);
       T_timer.stop;
     }
-    
-    T_timer.start;
-    
-    alt {
-      //Receive a HTTP response
-      [] client_port.receive(recv_resp) {
-        client_port.send(close_message);
-        T_timer.stop;
-        setverdict(pass);
-      }
-      //Receive a Half_Close response
-      [] client_port.receive(half_close) {
-        client_port.send(close_message);
-        T_timer.stop;
-        setverdict(fail);
-      }
-      //Receive something else
-      [] client_port.receive {
-        client_port.send(close_message);
-        T_timer.stop;
-        setverdict(fail);
-      }
-      [] T_timer.timeout {
-        setverdict(fail);
-      }
-    };
-    //client_port.send(close_message);
+    //Receive a Half_Close response
+    [] client_port.receive(half_close) {
+      client_port.send(v_close_message);
+      T_timer.stop;
+      setverdict(fail);
+    }
+    //Receive something else
+    [] client_port.receive {
+      client_port.send(v_close_message);
+      T_timer.stop;
+      setverdict(fail);
+    }
+    //Receive nothing until the end of the timer T_timer
+    [] T_timer.timeout {
+      setverdict(fail);
+    }
+  };
+  //Unmap from server
+  unmap(self:client_port, system:client_port);
+}
+
+testcase tc_laravel_get_all_json() runs on HTTP_client {
+  var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
+  var Close close_message := { client_id:= omit };
+  var HTTPMessage  v_HTTP_response;
+  var octetstring v_body;
+  var charstring vl_char_body;
+
+  //Map to server
+  map(self:client_port, system:client_port);
+
+  //Send HTTP connection
+  client_port.send(v_connection_message);
+
+  const HTTPMessage c_http_message := { request:= { method:= "GET", uri:= "/usage_stats", version_major:= 1, version_minor:= 1 , header:= c_header_accept_json, body:= ""}};
+
+  timer T_timer := 4.0;
+
+  //Send generated HTTP request
+  client_port.send(c_http_message);
+
+  if (T_timer.running) {
+    T_timer.stop;
   }
-      //Unmap from server
-    unmap(self:client_port, system:client_port);
+
+  T_timer.start;
+
+  alt {
+    //Receive a HTTP response
+    [] client_port.receive(HTTPMessage:?) -> value v_HTTP_response {
+      if (ischosen(v_HTTP_response.response_binary)) {
+        v_body:=v_HTTP_response.response_binary.body;
+        log("v_body", v_body);
+        log("encodingtype", get_stringencoding(v_body ));
+      } else if (ischosen(v_HTTP_response.response)) {
+        vl_char_body:= v_HTTP_response.response.body;
+        log("vl_char_body", vl_char_body);
+        var Usage_Stat_Response_Array v_JSON_PDU := ef_dec_usage_arr_JSON(char2oct(vl_char_body));
+        log("decoded JSON response",v_JSON_PDU);
+        //TODO: match with a template
+        if (lengthof(v_JSON_PDU) > 0) {
+          setverdict(pass);
+        } else {
+          setverdict(fail);
+        }
+      }
+    }
+    //Receive a Half_Close response
+    [] client_port.receive(half_close) {
+      client_port.send(close_message);
+      T_timer.stop;
+      setverdict(fail);
+    }
+    //Receive something else
+    [] client_port.receive {
+      client_port.send(close_message);
+      T_timer.stop;
+      setverdict(fail);
+    }
+    [] T_timer.timeout {
+      setverdict(fail);
+    }
+  };
+  //Unmap from server
+  unmap(self:client_port, system:client_port);
 }
 
 }
