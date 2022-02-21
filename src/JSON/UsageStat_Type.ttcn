@@ -40,7 +40,6 @@ type record of Usage_Stat_response Usage_Stat_Response_Array with {
 
 external function ef_enc_usage_JSON(in Usage_Stat_response msg) return octetstring with {
   extension "prototype (convert) encode(JSON)";
-  extension "printing(pretty)";
   extension "errorbehavior(ALL:ERROR)"
 }
 
@@ -51,7 +50,6 @@ external function ef_dec_usage_JSON(in octetstring p_stream) return Usage_Stat_r
 
 external function ef_enc_usage_arr_JSON(in Usage_Stat_Response_Array msg) return octetstring with {
   extension "prototype (convert) encode(JSON)";
-  extension "printing(pretty)";
   extension "errorbehavior(ALL:ERROR)"
 }
 
