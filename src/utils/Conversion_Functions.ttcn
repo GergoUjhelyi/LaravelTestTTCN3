@@ -1,7 +1,7 @@
 module Conversion_Functions {
 
-import from Route all;
 import from HTTPmsg_Types all;
+import from Route all;
 
 type record of charstring CharStringList;
 
@@ -38,11 +38,11 @@ function f_convertRouteObjectToHTTP(in Route_obj p_route_record) return HTTPMess
   }
   
   //HTTP version - 1.1
-  request.version_major:= HTTP_version_major;
-  request.version_minor:= HTTP_version_minor;
+  request.version_major:= 1;
+  request.version_minor:= 1;
   
   //client ID
-  request.client_id := omit;
+  request.client_id:= omit;
   
   //header
   request.header := c_standard_header_lines;
