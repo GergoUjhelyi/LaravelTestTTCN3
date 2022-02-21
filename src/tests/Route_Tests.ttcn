@@ -9,7 +9,7 @@ type component Empty_CT {}
 testcase file_not_exists_1_TC() runs on Empty_CT {
   var Route_Obj_List empty_list;
   empty_list := ef_readRoutesFile("");
-  var integer empty_list_size := lengthof (empty_list);
+  var integer empty_list_size := lengthof(empty_list);
   if (empty_list_size != 0) {
     setverdict(fail, "The size should be 0!");
   }
@@ -19,7 +19,7 @@ testcase file_not_exists_1_TC() runs on Empty_CT {
 testcase file_not_exists_2_TC() runs on Empty_CT {
   var Route_Obj_List empty_list;
   empty_list := ef_readRoutesFile("almafa");
-  var integer empty_list_size := lengthof (empty_list);
+  var integer empty_list_size := lengthof(empty_list);
   if (empty_list_size != 0) {
     setverdict(fail, "The size should be 0!");
   }
@@ -30,7 +30,7 @@ testcase file_exists_1_TC() runs on Empty_CT {
   f_init_route_files();
   var Route_Obj_List empty_list;
   empty_list := ef_readRoutesFile("routes.json");
-  var integer empty_list_size := lengthof (empty_list);
+  var integer empty_list_size := lengthof(empty_list);
   if (empty_list_size <= 0) {
     setverdict(fail, "The size should be over 0!");
   }
