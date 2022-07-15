@@ -29,6 +29,8 @@ import org.eclipse.titan.runtime.core.TTCN_Logger.Severity;
 import org.eclipse.titan.runtime.core.TtcnError;
 
 /**
+ * The abstract class for TCP socket handling for TITAN Java testports.
+ * 
  * @author Gergo Ujhelyi
  */
 public abstract class Abstract_Socket {
@@ -67,10 +69,9 @@ public abstract class Abstract_Socket {
 
 	private List<as_client_struct> peer_list_root;
 
-	/********************************
-	 **  Abstract_Socket
-	 **  abstract base type for TCP socket handling
-	 *********************************/
+	/** 
+	 * Class constructor.
+	 */
 	public Abstract_Socket() {
 		server_mode = false;
 		socket_debugging = true;
@@ -94,7 +95,13 @@ public abstract class Abstract_Socket {
 		peer_list_root = null;
 	}
 
-	public Abstract_Socket(String test_port_type, String test_port_name) {
+	/**
+	 * Class constructor specifying testport type and name.
+	 * 
+	 * @param	test_port_type	The type of the testport
+	 * @param	test_port_name	The name of the testport
+	 */
+	public Abstract_Socket(final String test_port_type, final String test_port_name) {
 		this.test_port_type = test_port_type;
 		this.test_port_name = test_port_name;
 		server_mode = false;
@@ -117,9 +124,12 @@ public abstract class Abstract_Socket {
 		peer_list_root = null;
 	}
 
-	////////////////////////////////////////////////////////////////////////
-	/////    Default log functions
-	////////////////////////////////////////////////////////////////////////
+	/**
+	 * Default logging function.
+	 * 
+	 * @param fmt The format string.
+	 * @param args The object's array what will be logged.
+	 */
 	protected void log_debug(final String fmt, final Object... args) {
 		if (socket_debugging) {
 			TTCN_Logger.begin_event(Severity.DEBUG_TESTPORT);
@@ -133,6 +143,12 @@ public abstract class Abstract_Socket {
 		}
 	}
 
+	/**
+	 * Default warning logging function.
+	 * 
+	 * @param fmt The format string.
+	 * @param args The object's array what will be logged.
+	 */
 	protected void log_warning(final String fmt, final Object... args) {
 		TTCN_Logger.begin_event(Severity.WARNING_UNQUALIFIED);
 		if (test_port_type != null && test_port_name != null) {
@@ -144,6 +160,13 @@ public abstract class Abstract_Socket {
 		TTCN_Logger.end_event();
 	}
 
+	/**
+	 * Default error logging function.
+	 * 
+	 * @param fmt The format string.
+	 * @param args The object's array what will be logged.
+	 * @throws TtcnError with the formatted string as error message.
+	 */
 	protected void log_error(final String fmt, final Object... args) {
 		String error_str = String.format(fmt, args);
 		try {
@@ -158,7 +181,15 @@ public abstract class Abstract_Socket {
 		}
 	}
 
-	protected void log_hex(final String prompt, final byte[] msg, int length) {
+	/**
+	 * Logging function for incoming and outgoing messages.
+	 * Log the message in hexadecimal format.
+	 * 
+	 * @param prompt The prompt string what is logged before message.
+	 * @param msg The message in byte format.
+	 * @param length The message length.
+	 */
+	protected void log_hex(final String prompt, final byte[] msg, final int length) {
 		if (socket_debugging) {
 			TTCN_Logger.begin_event(Severity.DEBUG_TESTPORT);
 			if (test_port_type != null && test_port_name != null) {
@@ -177,7 +208,15 @@ public abstract class Abstract_Socket {
 		}
 	}
 
-	// Shall be called from set_parameter()
+	/**
+	 * Set the class parameters' from a config file.
+	 * Shall be called from <code>set_parameter</code> function.
+	 * 
+	 * @param parameter_name The parameter name.
+	 * @param parameter_value The parameter value.
+	 * @return <code>true</code> if the parameter name valid and and set to the given value.
+	 * @throws TtcnError in <code>log_error</code> functions.
+	 */
 	protected boolean parameter_set(final String parameter_name, final String parameter_value) {
 		log_debug("entering Abstract_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
 
@@ -294,7 +333,21 @@ public abstract class Abstract_Socket {
 		return true;
 	}
 
-	// Shall be called from Handle_Event()
+	/**
+	 * Handle socket events. 
+	 * 
+	 *
+	 *<ul>
+	 *<li>a</li>
+	 *</ul>
+	 * 
+	 * Shall be called from <code>Handle_Event</code> function.
+	 * 
+	 * @param fd
+	 * @param is_readable
+	 * @param is_writable
+	 * @param is_error
+	 */
 	protected void Handle_Socket_Event(final SelectableChannel fd, final boolean is_readable, final boolean is_writable, final boolean is_error) {
 		log_debug("entering Abstract_Socket::Handle_Socket_Event(): fd: %s%s%s%s", fd.toString(), is_readable ? " readable" : "", is_writable ? " writable" : "", is_error ? " error" : "");
 
@@ -313,7 +366,7 @@ public abstract class Abstract_Socket {
 					log_debug("Abstract_Socket.Handle_Socket_Event(): setting socket state to STATE_DONT_CLOSE");
 					break;
 				case STATE_DONT_CLOSE:
-					log_debug("Abstract_Socket::Handle_Socket_Event(): state is STATE_DONT_CLOSE, don't close connection.");
+					log_debug("Abstract_Socket.Handle_Socket_Event(): state is STATE_DONT_CLOSE, don't close connection.");
 					break;
 				default:
 					if((client_data.tcp_state == TCP_STATES.CLOSE_WAIT) || (client_data.tcp_state == TCP_STATES.FIN_WAIT)) {
@@ -379,6 +432,12 @@ public abstract class Abstract_Socket {
 		log_debug("leaving Abstract_Socket.Handle_Socket_Event()");
 	}
 
+	/**
+	 * Reads<code>AS_TCP_CHUNCK_SIZE</code> bytes from the parameter channel.
+	 *  
+	 * @param fd The reading channel. 
+	 * @return The incoming message length, possibly zero.
+	 */
 	protected int receive_message_on_fd(SelectableChannel fd) {
 		as_client_struct client_data = get_peer(fd, false);
 		TTCN_Buffer recv_tb = client_data.fd_buff;
@@ -410,6 +469,13 @@ public abstract class Abstract_Socket {
 		return messageLength;
 	}
 
+	/** 
+	 * Writes message on channel in byte array format.
+	 * 
+	 * @param client_id The writing channel.
+	 * @param send_par The message in byte format.
+	 * @return The number of bytes written, possibly zero, or -1 if <code>IOException</code> raised.
+	 */
 	protected int send_message_on_fd(final SelectableChannel client_id, final byte[] send_par) {
 		get_peer(client_id, false);
 		try {
@@ -421,12 +487,13 @@ public abstract class Abstract_Socket {
 		}
 	}
 
+	
 	protected PacketHeaderDescr Get_Header_Descriptor() {
 		return null;
 	}
 
 	/**
-	 * Called after a peer is connectedd
+	 * Called after a peer is connected.
 	 * 
 	 * Do nothing in here. Override in your testport implementation.
 	 * 
@@ -501,7 +568,7 @@ public abstract class Abstract_Socket {
 			if (server_mode) {
 				open_listen_port(local_host_name, localPort);
 			} else {
-				//open_client_connection(remote_host_name, remotePort, local_host_name, localPort);
+				open_client_connection(remote_host_name, remotePort, local_host_name, localPort);
 			}
 		}
 
@@ -933,7 +1000,7 @@ public abstract class Abstract_Socket {
 	}
 
 	protected void send_outgoing(final byte[] message_buffer, final int length, final int client_id) {
-		log_debug("entering Abstract_Socket::send_outgoing()");
+		log_debug("entering Abstract_Socket.send_outgoing()");
 		log_hex("Sending data: ", message_buffer, length);
 		SocketChannel dest_socket_channel = null;
 		int nrOfBytesSent = 0;
@@ -1010,8 +1077,6 @@ public abstract class Abstract_Socket {
 		log_debug("entering Abstract_Socket.remove_client(%s)", fd.toString());
 		if (!fd.equals(listen_fd)) {
 			get_peer(fd, false);
-			//TODO: possible CancelledKeyException
-			//Add_Fd_Read_Handler(fd);
 			Remove_Fd_All_Handlers(fd);
 			remove_user_data(fd);
 			get_peer(fd, false).fd_buff = null;
@@ -1273,7 +1338,11 @@ public abstract class Abstract_Socket {
 		}
 	}
 
-	// Called when a message is received
+	/**
+	 * Called when a message is received.
+	 * 
+	 * 
+	 */
 	protected abstract void message_incoming(final byte[] message_buffer, final int length, final int client_id);
 
 	protected abstract void Add_Fd_Read_Handler(SelectableChannel fd);
