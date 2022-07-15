@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usage_Stat;
+use App\Models\UsageStat;
 use Illuminate\Http\Request;
 
 class UsageStatController extends Controller
@@ -14,7 +14,7 @@ class UsageStatController extends Controller
      */
     public function index()
     {
-        return response()->json(Usage_stat::all(), 200);
+        return response()->json(UsageStat::all(), 200);
     }
 
     /**
@@ -35,7 +35,7 @@ class UsageStatController extends Controller
      */
     public function store(Request $request)
     {
-        $usage = new Usage_Stat;
+        $usage = new UsageStat;
 
         $usage->plugin_id = $request->input('plugin_id');
         $usage->plugin_version_qualifier = $request->input('plugin_version_qualifier');
@@ -57,21 +57,21 @@ class UsageStatController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Usage_Stat  $usage_stat
+     * @param  \App\Models\UsageStat  $usage_stat
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        return response()->json(Usage_Stat::findOrFail($id), 200);
+        return response()->json(UsageStat::findOrFail($id), 200);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Usage_Stat  $usage_Stat
+     * @param  \App\Models\UsageStat  $usage_Stat
      * @return \Illuminate\Http\Response
      */
-    public function edit(Usage_Stat $usage_Stat)
+    public function edit(UsageStat $usage_Stat)
     {
         //
     }
@@ -80,10 +80,10 @@ class UsageStatController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\UpdateUsage_StatRequest  $request
-     * @param  \App\Models\Usage_Stat  $usage_Stat
+     * @param  \App\Models\UsageStat  $usage_Stat
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUsage_StatRequest $request, Usage_Stat $usage_Stat)
+    public function update(UpdateUsage_StatRequest $request, UsageStat $usage_Stat)
     {
         //
     }
@@ -91,10 +91,10 @@ class UsageStatController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Usage_Stat  $usage_Stat
+     * @param  \App\Models\UsageStat  $usage_Stat
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Usage_Stat $usage_Stat)
+    public function destroy(UsageStat $usage_Stat)
     {
         //
     }

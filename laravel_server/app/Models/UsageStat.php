@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Usage_Stat extends Model
+class UsageStat extends Model
 {
     use HasFactory;
 

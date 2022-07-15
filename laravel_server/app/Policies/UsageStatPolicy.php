@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Usage_Stat;
+use App\Models\UsageStat;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class UsageStatPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Usage_Stat  $usageStat
+     * @param  \App\Models\UsageStat  $usageStat
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Usage_Stat $usageStat)
+    public function view(User $user, UsageStat $usageStat)
     {
         //
     }
@@ -48,10 +48,10 @@ class UsageStatPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Usage_Stat  $usageStat
+     * @param  \App\Models\UsageStat  $usageStat
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Usage_Stat $usageStat)
+    public function update(User $user, UsageStat $usageStat)
     {
         //
     }
@@ -60,10 +60,10 @@ class UsageStatPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Usage_Stat  $usageStat
+     * @param  \App\Models\UsageStat  $usageStat
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Usage_Stat $usageStat)
+    public function delete(User $user, UsageStat $usageStat)
     {
         //
     }
@@ -72,10 +72,10 @@ class UsageStatPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Usage_Stat  $usageStat
+     * @param  \App\Models\UsageStat  $usageStat
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Usage_Stat $usageStat)
+    public function restore(User $user, UsageStat $usageStat)
     {
         //
     }
@@ -84,10 +84,10 @@ class UsageStatPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Usage_Stat  $usageStat
+     * @param  \App\Models\UsageStat  $usageStat
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Usage_Stat $usageStat)
+    public function forceDelete(User $user, UsageStat $usageStat)
     {
         //
     }

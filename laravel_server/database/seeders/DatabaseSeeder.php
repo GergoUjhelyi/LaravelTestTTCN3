@@ -2,7 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\UsageStat;
+use Faker\Factory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +16,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $faker = Factory::create();
+        DB::table('usage_stats')->truncate();
+
+        UsageStat::factory($faker->numberBetween(10,30))->create();
     }
 }
