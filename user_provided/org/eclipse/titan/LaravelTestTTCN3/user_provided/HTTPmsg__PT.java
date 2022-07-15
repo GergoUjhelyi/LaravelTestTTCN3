@@ -915,7 +915,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			TTCN_Logger.log(Severity.DEBUG_TESTPORT, "Headers decoded. %s headers.", decoding_params.isMessage ? "Valid" : "Invalid");
 
 			if (isResponse && decoding_params.content_length == -1) {
-				if ((statusCode >99 && statusCode < 200) || statusCode == 204 || statusCode == 304 ) {
+				if ((statusCode > 99 && statusCode < 200) || statusCode == 204 || statusCode == 304 ) {
 					decoding_params.content_length = 0;
 				}
 			}
@@ -986,7 +986,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 						request.get_field_body().operator_assign(AdditionalFunctions.oct2char(body));
 					}
 				}
-				//incoming_message(msg); <- outer function calls if necessary
 			}
 			method_name = null;
 			stext = null;
@@ -1007,7 +1006,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				msg.get_field_erronous__msg().get_field_msg().operator_assign(new TitanCharString("The previous message is erronous."));
 			}
 			msg.get_field_erronous__msg().get_field_client__id().set_to_omit();
-			//incoming_message(msg);
 			buffer.clear();
 			decoding_params.isMessage = true;
 		}
@@ -1258,6 +1256,15 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		return false;
 	}
 
+	/**
+	 * Log debug information function.
+	 * 
+	 * @param socket_debugging
+	 * @param test_port_type
+	 * @param test_port_name
+	 * @param fmt
+	 * @param args
+	 */
 	public static void log_debug(final boolean socket_debugging, final String test_port_type, final String test_port_name, final String fmt, Object... args) {
 		if (socket_debugging) {
 			TTCN_Logger.begin_event(Severity.DEBUG_TESTPORT);
