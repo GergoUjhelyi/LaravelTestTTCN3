@@ -81,8 +81,6 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
   //Send HTTP connection
   client_port.send(v_connection_message);
 
-  
-
   timer T_timer := 4.0;
 
   //Send generated HTTP request
@@ -99,7 +97,7 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
     [] client_port.receive(HTTPMessage:?) -> value v_HTTP_response {
       if (ischosen(v_HTTP_response.response_binary)) {
         v_body:=v_HTTP_response.response_binary.body;
-        
+
         log("v_body", v_body);
         log("encodingtype", get_stringencoding(v_body));
       } else if (ischosen(v_HTTP_response.response)) {

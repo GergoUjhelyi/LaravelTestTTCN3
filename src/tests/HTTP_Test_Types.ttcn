@@ -4,7 +4,6 @@ import from HTTPmsg_PortType all;
 import from HTTPmsg_Types all;
 import from UsageStat_Type all;
 
-
 //Template to match with any HTTP response
 template HTTPMessage any_response := { response:= ? };
 
