@@ -58,4 +58,18 @@ external function ef_dec_usage_arr_JSON(in octetstring p_stream) return Usage_St
   extension "errorbehavior(ALL:ERROR)"
 }
 
+/** Logger function for Usage_Stat_Response_Array type **/
+function log_usage_stat_response_array (in Usage_Stat_Response_Array array) {
+  log("****************************************************************");
+  log("* Beautiful logger function for Usage_Stat_Response_Array Type *" );
+  log("*                                                              *");
+  log("*                                                              *");
+  log("*                                                              *");
+  log("*                        Array Length: ", lengthof(array) ,"                      *");
+  log("****************************************************************");
+  for(var integer i:=0; i < lengthof(array); i:=i + 1) {
+    log(array[i],"\n");
+  }
+}
+
 } with { encode "JSON" }
