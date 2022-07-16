@@ -1,0 +1,65 @@
+module HTTP_Test_Types {
+
+import from HTTPmsg_PortType all;
+import from HTTPmsg_Types all;
+import from UsageStat_Type all;
+
+
+//Template to match with any HTTP response
+template HTTPMessage any_response := { response:= ? };
+
+//Template to match with any HTTP error message
+template HTTPMessage any_error := { erronous_msg:= ? };
+
+//Template to match with any Half Close message
+template Half_close any_half_close := { client_id:= ? };
+
+//Template to match with HTTP 200 Response
+template HTTPMessage recv_ok_response := {
+  response:= {
+    client_id:= ?,
+    version_major:= ?,
+    version_minor:= ?,
+    statuscode:= 200,
+    statustext:= pattern "*OK*",
+    header:= ?,
+    body := ?
+  }
+};
+
+//Template to match with one UsageStat instance
+template Usage_Stat_response usage_state_resp_template := {
+  id:= ?,
+  plugin_id:= "Eclipse Titan Java",
+  plugin_version_qualifier:= "Thesis Edition",
+  plugin_version:= ?,
+  os_version:= "Example Version",
+  os_arch:= "x86-64",
+  eclipse_version:= ?,
+  eclipse_version_qualifier:= "",
+  user_id:= ?,
+  java_version:= ?,
+  os_name:= ?,
+  info:= ?
+};
+
+//standard HTTP header for accept HTML MIME type
+const HeaderLines c_header_accept_html := {
+  { header_name:= "Connection", header_value:= "close" },
+  //Accept HTML and JSON MIME type for now
+  { header_name:= "Accept", header_value:= "text/html"}
+};
+
+//standard HTTP header for accept JSON MIME type
+const HeaderLines c_header_accept_json := {
+  { header_name:= "Connection", header_value:= "close" },
+  //Accept HTML and JSON MIME type for now
+  { header_name:= "Accept", header_value:= "application/json, application/javascript"}
+};
+
+//Generic HTTP request with HTML accept header
+const HTTPMessage c_http_get_main_page := { request:= { method:= "GET", uri:= "/", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
+
+//HTTP request to GET usage stats with accept JSON header
+const HTTPMessage c_http_get_all_usage_stats := { request:= { method:= "GET", uri:= "/usage_stats", version_major:= 1, version_minor:= 1 , header:= c_header_accept_json, body:= ""}};
+}
