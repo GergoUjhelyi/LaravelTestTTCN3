@@ -2,6 +2,7 @@ module HTTP_Tests {
 
 import from HTTPmsg_PortType all;
 import from HTTPmsg_Types all;
+import from HTTP_Test_Types all;
 import from UsageStat_Type all;
 
 //Default server parameters
@@ -11,41 +12,6 @@ modulepar boolean HttpServerUseSSL := false;
 
 type component HTTP_client {
   port HTTPmsg_PT client_port;
-};
-
-//this template will match any HTTPResponse type value in a HTTPMessage
-template HTTPMessage recv_resp := { response := ? };
-
-//this template will match any HTTP_erronous_msg type value in a HTTPMessage
-template HTTPMessage recv_err := { erronous_msg := ? };
-
-//this template will match any Half_close type value
-template Half_close half_close := { client_id := ? };
-
-template HTTPMessage recv_ok_response := {
-  response:= {
-    client_id:= ?,
-    version_major:= 1,
-    version_minor:= 1,
-    statuscode:= 200,
-    statustext:= pattern "*OK*",
-    header:= ?,
-    body := ?
-  }
-};
-
-//standard HTTP header for accept HTML MIME type
-const HeaderLines c_header_accept_html := {
-  { header_name:= "Connection", header_value:= "close" },
-  //Accept HTML and JSON MIME type for now
-  { header_name:= "Accept", header_value:= "text/html"}
-};
-
-//standard HTTP header for accept JSON MIME type
-const HeaderLines c_header_accept_json := {
-  { header_name:= "Connection", header_value:= "close" },
-  //Accept HTML and JSON MIME type for now
-  { header_name:= "Accept", header_value:= "application/json, application/javascript"}
 };
 
 /***************************************
@@ -63,13 +29,10 @@ testcase tc_laravel_index_test() runs on HTTP_client {
   //Send HTTP connection
   client_port.send(v_connection_message);
 
-  //Generic HTTP request with HTML accept header
-  const HTTPMessage c_http_message := { request:= { method:= "GET", uri:= "/", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
-
   timer T_timer := 4.0;
 
   //Send generated HTTP request
-  client_port.send(c_http_message);
+  client_port.send(c_http_get_main_page);
 
   T_timer.start;
 
@@ -85,7 +48,7 @@ testcase tc_laravel_index_test() runs on HTTP_client {
       T_timer.stop;
     }
     //Receive a Half_Close response
-    [] client_port.receive(half_close) {
+    [] client_port.receive(any_half_close) {
       client_port.send(v_close_message);
       T_timer.stop;
       setverdict(fail);
@@ -118,12 +81,12 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
   //Send HTTP connection
   client_port.send(v_connection_message);
 
-  const HTTPMessage c_http_message := { request:= { method:= "GET", uri:= "/usage_stats", version_major:= 1, version_minor:= 1 , header:= c_header_accept_json, body:= ""}};
+  
 
   timer T_timer := 4.0;
 
   //Send generated HTTP request
-  client_port.send(c_http_message);
+  client_port.send(c_http_get_all_usage_stats);
 
   if (T_timer.running) {
     T_timer.stop;
@@ -136,13 +99,14 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
     [] client_port.receive(HTTPMessage:?) -> value v_HTTP_response {
       if (ischosen(v_HTTP_response.response_binary)) {
         v_body:=v_HTTP_response.response_binary.body;
+        
         log("v_body", v_body);
-        log("encodingtype", get_stringencoding(v_body ));
+        log("encodingtype", get_stringencoding(v_body));
       } else if (ischosen(v_HTTP_response.response)) {
         vl_char_body:= v_HTTP_response.response.body;
         log("vl_char_body", vl_char_body);
         var Usage_Stat_Response_Array v_JSON_PDU := ef_dec_usage_arr_JSON(char2oct(vl_char_body));
-        log("decoded JSON response",v_JSON_PDU);
+        log_usage_stat_response_array(v_JSON_PDU);
         //TODO: match with a template
         if (lengthof(v_JSON_PDU) > 0) {
           setverdict(pass);
@@ -152,7 +116,7 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
       }
     }
     //Receive a Half_Close response
-    [] client_port.receive(half_close) {
+    [] client_port.receive(any_half_close) {
       client_port.send(close_message);
       T_timer.stop;
       setverdict(fail);
