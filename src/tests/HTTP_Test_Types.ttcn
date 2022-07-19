@@ -45,14 +45,14 @@ template Usage_Stat_response usage_state_resp_template := {
 //standard HTTP header for accept HTML MIME type
 const HeaderLines c_header_accept_html := {
   { header_name:= "Connection", header_value:= "close" },
-  //Accept HTML and JSON MIME type for now
+  //Accept HTML MIME type
   { header_name:= "Accept", header_value:= "text/html"}
 };
 
 //standard HTTP header for accept JSON MIME type
 const HeaderLines c_header_accept_json := {
   { header_name:= "Connection", header_value:= "close" },
-  //Accept HTML and JSON MIME type for now
+  //Accept JSON MIME type
   { header_name:= "Accept", header_value:= "application/json, application/javascript"}
 };
 
@@ -61,4 +61,7 @@ const HTTPMessage c_http_get_main_page := { request:= { method:= "GET", uri:= "/
 
 //HTTP request to GET usage stats with accept JSON header
 const HTTPMessage c_http_get_all_usage_stats := { request:= { method:= "GET", uri:= "/usage_stats", version_major:= 1, version_minor:= 1 , header:= c_header_accept_json, body:= ""}};
+
+// Generic close message
+const Close c_close_message := { client_id:= omit };
 }

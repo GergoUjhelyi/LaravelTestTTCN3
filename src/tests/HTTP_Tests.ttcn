@@ -20,7 +20,6 @@ type component HTTP_client {
 **************************************/ 
 testcase tc_laravel_index_test() runs on HTTP_client {
   var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
-  var Close v_close_message := { client_id:= omit };
   var HTTPMessage v_HTTP_response;
 
   //Map to server
@@ -44,18 +43,18 @@ testcase tc_laravel_index_test() runs on HTTP_client {
       } else {
         setverdict(fail, "Received wrong response! Received: ", v_HTTP_response);
       }
-      client_port.send(v_close_message);
+      client_port.send(c_close_message);
       T_timer.stop;
     }
     //Receive a Half_Close response
     [] client_port.receive(any_half_close) {
-      client_port.send(v_close_message);
+      client_port.send(c_close_message);
       T_timer.stop;
       setverdict(fail);
     }
     //Receive something else
     [] client_port.receive {
-      client_port.send(v_close_message);
+      client_port.send(c_close_message);
       T_timer.stop;
       setverdict(fail);
     }
@@ -70,7 +69,6 @@ testcase tc_laravel_index_test() runs on HTTP_client {
 
 testcase tc_laravel_get_all_json() runs on HTTP_client {
   var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
-  var Close close_message := { client_id:= omit };
   var HTTPMessage  v_HTTP_response;
   var octetstring v_body;
   var charstring vl_char_body;
@@ -115,13 +113,13 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
     }
     //Receive a Half_Close response
     [] client_port.receive(any_half_close) {
-      client_port.send(close_message);
+      client_port.send(c_close_message);
       T_timer.stop;
       setverdict(fail);
     }
     //Receive something else
     [] client_port.receive {
-      client_port.send(close_message);
+      client_port.send(c_close_message);
       T_timer.stop;
       setverdict(fail);
     }
