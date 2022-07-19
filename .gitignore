@@ -9,3 +9,6 @@ temp.cfg
 
 ## Temporary route file
 routes.json
+
+## Cache directory
+/.cache
