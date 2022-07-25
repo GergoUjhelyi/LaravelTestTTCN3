@@ -35,11 +35,13 @@ template Usage_Stat_response usage_state_resp_template := {
   os_version:= "Example Version",
   os_arch:= "x86-64",
   eclipse_version:= ?,
-  eclipse_version_qualifier:= "",
+  eclipse_version_qualifier:= ?,
   user_id:= ?,
   java_version:= ?,
   os_name:= ?,
-  info:= ?
+  info:= ?,
+  created_at:=?,
+  updated_at:=?
 };
 
 //standard HTTP header for accept HTML MIME type
@@ -64,4 +66,6 @@ const HTTPMessage c_http_get_all_usage_stats := { request:= { method:= "GET", ur
 
 // Generic close message
 const Close c_close_message := { client_id:= omit };
+
+const charstring c_server_directory := "./laravel_server";
 }
