@@ -100,8 +100,6 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
         vl_char_body:= v_HTTP_response.response.body;
 
         var Usage_Stat_Response_Array v_JSON_PDU := ef_dec_usage_arr_JSON(char2oct(vl_char_body));
-        log_usage_stat_response_array(v_JSON_PDU);
-        //TODO: match with a template
         if (lengthof(v_JSON_PDU) <= 0) {
           setverdict(fail);
         }
