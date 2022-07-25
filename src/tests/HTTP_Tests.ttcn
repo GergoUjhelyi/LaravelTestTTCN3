@@ -30,7 +30,7 @@ testcase tc_laravel_index_test() runs on HTTP_client {
 
   timer T_timer := 4.0;
 
-  //Send generated HTTP request
+  //Send HTTP request
   client_port.send(c_http_get_main_page);
 
   T_timer.start;
@@ -81,7 +81,7 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
 
   timer T_timer := 4.0;
 
-  //Send generated HTTP request
+  //Send HTTP request
   client_port.send(c_http_get_all_usage_stats);
 
   if (T_timer.running) {
