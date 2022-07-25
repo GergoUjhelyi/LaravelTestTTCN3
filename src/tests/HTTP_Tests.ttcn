@@ -95,19 +95,22 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
     [] client_port.receive(HTTPMessage:?) -> value v_HTTP_response {
       if (ischosen(v_HTTP_response.response_binary)) {
         v_body:=v_HTTP_response.response_binary.body;
-
-        log("v_body", v_body);
         log("encodingtype", get_stringencoding(v_body));
       } else if (ischosen(v_HTTP_response.response)) {
         vl_char_body:= v_HTTP_response.response.body;
-        log("vl_char_body", vl_char_body);
+
         var Usage_Stat_Response_Array v_JSON_PDU := ef_dec_usage_arr_JSON(char2oct(vl_char_body));
         log_usage_stat_response_array(v_JSON_PDU);
         //TODO: match with a template
-        if (lengthof(v_JSON_PDU) > 0) {
-          setverdict(pass);
-        } else {
+        if (lengthof(v_JSON_PDU) <= 0) {
           setverdict(fail);
+        }
+        for(var integer i:=0; i < lengthof(v_JSON_PDU); i:=i+1) {
+          if (match(v_JSON_PDU[i], usage_state_resp_template)) {
+            setverdict(pass);
+          } else {
+            setverdict(fail);
+          }
         }
       }
     }
