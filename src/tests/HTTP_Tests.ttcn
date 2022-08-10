@@ -67,6 +67,10 @@ testcase tc_laravel_index_test() runs on HTTP_client {
   unmap(self:client_port, system:client_port);
 }
 
+/***************************************
+** @desc Test the Usage_Stat instances in the servers' database **
+** @verdict pass if the servers' DB contains only valid usage stats **
+**************************************/
 testcase tc_laravel_get_all_json() runs on HTTP_client {
   var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
   var HTTPMessage v_HTTP_response;
@@ -132,6 +136,10 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
   unmap(self:client_port, system:client_port);
 }
 
+/***************************************
+** @desc Test the first Usage_Stat instances in the servers' database **
+** @verdict pass if the first insatnce exists and valid **
+**************************************/
 testcase tc_laravel_get_first_element_by_id_json() runs on HTTP_client {
   var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
   var HTTPMessage v_http_get_first_instance := { request:= { method:= "GET", uri:= "/usage_stats/1", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
@@ -192,6 +200,10 @@ testcase tc_laravel_get_first_element_by_id_json() runs on HTTP_client {
   unmap(self:client_port, system:client_port);
 }
 
+/***************************************
+** @desc Test the a non-exists Usage_Stat instances in the servers' database **
+** @verdict pass if the server respond a Not Found response **
+**************************************/
 testcase tc_laravel_get_unknown_element_by_id_json() runs on HTTP_client {
   var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
   var HTTPMessage v_http_get_unknown_instance := { request:= { method:= "GET", uri:= "/usage_stats/10000", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
