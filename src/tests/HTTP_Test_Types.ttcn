@@ -26,9 +26,40 @@ template HTTPMessage recv_ok_response := {
   }
 };
 
+//Template to match with HTTP 404 Response
+template HTTPMessage recv_page_not_found_response := {
+  response := {
+    client_id:= ?,
+    version_major:= ?,
+    version_minor:= ?,
+    statuscode:= 404,
+    statustext:= pattern @nocase "*NOT FOUND*",
+    header:= ?,
+    body := ?
+  }
+};
+
 //Template to match with one UsageStat instance
 template Usage_Stat_response usage_state_resp_template := {
   id:= ?,
+  plugin_id:= "Eclipse Titan Java",
+  plugin_version_qualifier:= "Thesis Edition",
+  plugin_version:= ?,
+  os_version:= "Example Version",
+  os_arch:= "x86-64",
+  eclipse_version:= ?,
+  eclipse_version_qualifier:= ?,
+  user_id:= ?,
+  java_version:= ?,
+  os_name:= ?,
+  info:= ?,
+  created_at:=?,
+  updated_at:=?
+};
+
+//Parametrized template to match with one UsageStat instance
+template Usage_Stat_response usage_state_resp_param_template(template integer p_formalIdParam) := {
+  id:= p_formalIdParam,
   plugin_id:= "Eclipse Titan Java",
   plugin_version_qualifier:= "Thesis Edition",
   plugin_version:= ?,
