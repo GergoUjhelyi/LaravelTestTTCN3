@@ -10,8 +10,6 @@ modulepar charstring HttpServerHost := "localhost";
 modulepar integer HttpServerPort := 8000;
 modulepar boolean HttpServerUseSSL := false;
 
-type set of integer SoID;
-
 type component HTTP_client {
   port HTTPmsg_PT client_port;
 };
