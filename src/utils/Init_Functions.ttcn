@@ -1,6 +1,7 @@
 module Init_Functions {
 
-modulepar charstring server_directory := "/laravel_server";
+import from HTTP_Test_Types all;
+
 modulepar charstring route_file := "routes.json";
 
 external function ef_valid_path(in charstring p_server_dir_path) return boolean;
@@ -11,11 +12,11 @@ external function ef_start_laravel_server(in charstring p_server_dir_path);
 
 //TODO: finish
 function f_init_route_files() {
-  if ( ef_valid_path(server_directory) == false) {
+  if ( ef_valid_path(c_server_directory) == false) {
     log("Not valid server directory path!");
     return;
   }
-  ef_create_route_file(server_directory, route_file);
+  ef_create_route_file(c_server_directory, route_file);
   
 }
 
