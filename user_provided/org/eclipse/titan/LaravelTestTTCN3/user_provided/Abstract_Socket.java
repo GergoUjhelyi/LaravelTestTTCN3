@@ -70,7 +70,7 @@ public abstract class Abstract_Socket {
 	private List<as_client_struct> peer_list_root;
 
 	/** 
-	 * Class constructor.
+	 * Constructs the class without testport name and testport type.
 	 */
 	public Abstract_Socket() {
 		server_mode = false;
@@ -96,7 +96,7 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 * Class constructor specifying testport type and name.
+	 * Constructs the class with testport name and testport type.
 	 * 
 	 * @param	test_port_type	The type of the testport
 	 * @param	test_port_name	The name of the testport
@@ -334,19 +334,14 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 * Handle socket events. 
-	 * 
-	 *
-	 *<ul>
-	 *<li>a</li>
-	 *</ul>
+	 * Handle function for socket events coming from the Channel's selector.
 	 * 
 	 * Shall be called from <code>Handle_Event</code> function.
 	 * 
-	 * @param fd
-	 * @param is_readable
-	 * @param is_writable
-	 * @param is_error
+	 * @param fd the SelectableChannel what has event in the queue.
+	 * @param is_readable the event is a reading event.
+	 * @param is_writable the event is a writing event.
+	 * @param is_error the event is an error event.
 	 */
 	protected void Handle_Socket_Event(final SelectableChannel fd, final boolean is_readable, final boolean is_writable, final boolean is_error) {
 		log_debug("entering Abstract_Socket::Handle_Socket_Event(): fd: %s%s%s%s", fd.toString(), is_readable ? " readable" : "", is_writable ? " writable" : "", is_error ? " error" : "");
@@ -433,7 +428,7 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 * Reads<code>AS_TCP_CHUNCK_SIZE</code> bytes from the parameter channel.
+	 * Reads <code>AS_TCP_CHUNCK_SIZE</code> bytes from the parameter channel.
 	 *  
 	 * @param fd The reading channel. 
 	 * @return The incoming message length, possibly zero.
@@ -487,7 +482,12 @@ public abstract class Abstract_Socket {
 		}
 	}
 
-	
+	/**
+	 * Get the message header descriptor. By default the function returns <code>null</code>.
+	 * Need to specify in every protocol or testport what uses this class.
+	 * 
+	 * @return the descriptor of the message headers
+	 */
 	protected PacketHeaderDescr Get_Header_Descriptor() {
 		return null;
 	}
@@ -501,10 +501,13 @@ public abstract class Abstract_Socket {
 	 * @param host - String
 	 * @param port - int
 	 */
-	protected void peer_connected(final int client_id, final String host, final int port) {
+	protected void peer_connected(final int client_id, final String host, final int port) {}
 
-	}
-
+	/**
+	 * Handle incoming messages with or without header descriptor.
+	 * 
+	 * @param client_id the SelectableChannel what has an incoming message
+	 */
 	private void handle_message(final SelectableChannel client_id) {
 		final PacketHeaderDescr head_descr = Get_Header_Descriptor();
 		as_client_struct client_data = get_peer(client_id, false);
@@ -521,7 +524,6 @@ public abstract class Abstract_Socket {
 			while (recv_tb.get_len() > 0) {
 				if ((long)recv_tb.get_len() < valid_header_length) {
 					// this is a message without a valid header
-					// recv_tb->handle_fragment();
 					return;
 				}
 				long message_length = head_descr.Get_Message_Length(recv_tb.get_data());
@@ -531,7 +533,6 @@ public abstract class Abstract_Socket {
 				}
 				if ((long)recv_tb.get_len() < message_length) {
 					// this is a fragmented message with a valid header
-					// recv_tb->handle_fragment();
 					return;
 				}
 				message_incoming(recv_tb.get_data(), recv_tb.get_len(), peer_list_root.indexOf(client_data));
@@ -544,7 +545,10 @@ public abstract class Abstract_Socket {
 		log_debug("leaving Abstract_Socket.handle_message()");
 	}
 
-	// Shall be called from user_map()
+	/**
+	 * Open a server or a client socket.
+	 * Shall be called from <code>user_map</code>.
+	 */
 	protected void map_user() {
 		log_debug("entering Abstract_Socket.map_user()");
 		if (!use_connection_ASPs) {
@@ -575,6 +579,13 @@ public abstract class Abstract_Socket {
 		log_debug("leaving Abstract_Socket.map_user()");
 	}
 
+	/**
+	 * Open a server socket.
+	 * 
+	 * @param localHostname the local address.
+	 * @param localServicename the local service name or port where the socket will be opened.
+	 * @return <b>-1</b> if any error occurred,<br> or the <b>port number</b> where the socket will be opened
+	 */
 	protected int open_listen_port(final String localHostname, final String localServicename) {
 		log_debug("Local address: %s/%s", (localHostname != null) ? localHostname : "UNSPEC", (localServicename != null) ? localServicename : "UNSPEC");
 		/* Set up a socket to listen for connections. */
