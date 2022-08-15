@@ -98,8 +98,8 @@ public abstract class Abstract_Socket {
 	/**
 	 * Constructs the class with testport name and testport type.
 	 * 
-	 * @param	test_port_type	The type of the testport
-	 * @param	test_port_name	The name of the testport
+	 * @param test_port_type the type of the testport
+	 * @param test_port_name the name of the testport
 	 */
 	public Abstract_Socket(final String test_port_type, final String test_port_name) {
 		this.test_port_type = test_port_type;
@@ -476,8 +476,7 @@ public abstract class Abstract_Socket {
 		try {
 			return ((SocketChannel) client_id).write(ByteBuffer.wrap(send_par));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log_error("Error during sending message on socket %s : %s", client_id.toString(), e.getMessage());
 			return -1;
 		}
 	}
@@ -743,8 +742,16 @@ public abstract class Abstract_Socket {
 		return listenPort;
 	}
 
+	/**
+	 * Abstract method to notify user after a server/listening socket opened.
+	 * 
+	 * @param port_number where to listening socket binded
+	 */
 	protected abstract void listen_port_opened(int port_number);
 
+	/**
+	 * Close listening/server socket and deregister from the Selector.
+	 */
 	protected void close_listen_port() {
 		// close current listening port if it is alive
 		if (listen_fd != null && listen_fd.isOpen()) {
@@ -752,8 +759,7 @@ public abstract class Abstract_Socket {
 			try {
 				listen_fd.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log_error("Error during closing listening socket: %s", e.getMessage());
 				return;
 			}
 			log_debug("Closed listening port of fd: %s", listen_fd.toString());
@@ -761,6 +767,11 @@ public abstract class Abstract_Socket {
 		}
 	}
 
+	/**
+	 * Return the listening/server socket or the first client socket in the list.
+	 * 
+	 * @return SelectableChannel what is in use
+	 */
 	protected SelectableChannel get_socket_fd() {
 		if (server_mode) {
 			return listen_fd;
@@ -771,6 +782,15 @@ public abstract class Abstract_Socket {
 		return peer_list_get_first_peer();
 	}
 
+	/**
+	 * Open a client socket and connect to a host.
+	 * 
+	 * @param remoteHostname the host address or name
+	 * @param remoteService the host service name or port number
+	 * @param localHostname the local host address or name
+	 * @param localService the local service name or port
+	 * @return the connection index in the connection handle list
+	 */
 	protected int open_client_connection(final String remoteHostname, final String remoteService, final String localHostname, final String localService) {
 		log_debug("Abstract_Socket.open_client_connection(remoteAddr: %s/%s, localAddr: %s/%s) called", remoteHostname, remoteService, (localHostname != null) ? localHostname : "UNSPEC", (localService != null) ? localService : "UNSPEC");
 
@@ -797,10 +817,8 @@ public abstract class Abstract_Socket {
 		} else if (localHostname == null && localService == null) {
 			new_local_addr = new InetSocketAddress(0);
 		}
-
 		int TCP_reconnect_counter = TCP_reconnect_attempts;
 		SocketChannel socket_fd = null;
-
 		try {
 			socket_fd = SocketChannel.open();
 		} catch (IOException e) {
@@ -812,7 +830,6 @@ public abstract class Abstract_Socket {
 				log_error("Cannot open socket: %s", e.getMessage());
 			}
 		}
-
 		if (!nagling) {
 			try {
 				socket_fd.setOption(StandardSocketOptions.TCP_NODELAY, true);
@@ -826,10 +843,8 @@ public abstract class Abstract_Socket {
 				}
 			}
 		}
-
 		// when using client mode there is no separate file_desriptor for listening and target
 		log_debug("Connecting to server from address %s:%d", new_local_addr.getHostString(), new_local_addr.getPort());
-
 		if (new_local_addr.getPort() != 0) { // specific port to use
 			try {
 				socket_fd.setOption(StandardSocketOptions.SO_REUSEADDR, true);
@@ -855,7 +870,6 @@ public abstract class Abstract_Socket {
 			}
 			log_debug("Bind successful on client.");
 		}
-
 		try {
 			socket_fd.connect(new_remote_addr);
 			socket_fd.finishConnect();
@@ -897,7 +911,6 @@ public abstract class Abstract_Socket {
 				log_error("Cannot connect to server");
 			}
 		}
-
 		try {
 			socket_fd.configureBlocking(false);
 		} catch (IOException e) {
@@ -919,7 +932,6 @@ public abstract class Abstract_Socket {
 				log_error("Set blocking mode failed.");
 			}
 		}
-
 		as_client_struct client_data = peer_list_add_peer(socket_fd);
 		Add_Fd_Read_Handler(socket_fd);
 		log_debug("Abstract_Socket.open_client_connection(). Handler set to socket fd %s", socket_fd.toString());
@@ -932,13 +944,21 @@ public abstract class Abstract_Socket {
 			peer_disconnected(socket_fd);
 			return -1;
 		}
-
 		client_connection_opened(peer_list_root.size() - 1);
 		return (peer_list_root.size() - 1);
 	}
 
+	/**
+	 * Abstract method to notify user after a server/listening socket opened.
+	 * 
+	 * @param client_id the index of the connection
+	 */
 	protected abstract void client_connection_opened(int client_id);
 
+	/**
+	 * User called unmap. Close all connection, remove clients, deregister the channels from their Selector.
+	 * 
+	 */
 	protected void unmap_user()
 	{
 		log_debug("entering Abstract_Socket.unmap_user()");
@@ -968,7 +988,7 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 * Called when a peer shut down its fd for writing
+	 * Called when a peer shut down its SelectableChannel for writing.
 	 * 
 	 * @param fd - SelectableChannel
 	 */
@@ -979,10 +999,14 @@ public abstract class Abstract_Socket {
 		log_debug("Leaving Abstract_Socket.peer_half_closed()");
 	}
 
+	/**
+	 * Send TCP closing/shutdown message on the connection.
+	 * 
+	 * @param client_id the index of the connection
+	 */
 	protected void send_shutdown(final SocketChannel client_id) {
 		log_debug("entering Abstract_Socket.send_shutdown()");
 		SocketChannel dest_fd = client_id;
-
 		if (dest_fd == null) {
 			if (peer_list_get_nr_of_peers() > 1) {
 				log_error("Client Id not specified altough not only 1 client exists");
@@ -995,7 +1019,6 @@ public abstract class Abstract_Socket {
 		if (client_data.tcp_state != TCP_STATES.ESTABLISHED) {
 			log_error("TCP state of client %s does not allow to shut down its connection for writing!", dest_fd.toString());
 		}
-
 		try {
 			dest_fd.shutdownOutput();
 			remove_client(dest_fd);
@@ -1004,12 +1027,16 @@ public abstract class Abstract_Socket {
 			log_error("shutdownOutput() call failed");
 		}
 		client_data.tcp_state = TCP_STATES.FIN_WAIT;
-
-		// dest_fd is not removed from readfds, data can be received
-
 		log_debug("leaving Abstract_Socket.send_shutdown()");
 	}
 
+	/**
+	 * Send outgoing TCP message.
+	 * 
+	 * @param message_buffer the message in byte array format
+	 * @param length the message length
+	 * @param client_id the index of the connection
+	 */
 	protected void send_outgoing(final byte[] message_buffer, final int length, final int client_id) {
 		log_debug("entering Abstract_Socket.send_outgoing()");
 		log_hex("Sending data: ", message_buffer, length);
@@ -1033,9 +1060,7 @@ public abstract class Abstract_Socket {
 			log_debug("leaving Abstract_Socket.send_outgoing()");
 			return;
 		}
-
 		nrOfBytesSent = send_message_on_fd(dest_socket_channel, message_buffer);
-
 		if (nrOfBytesSent == -1) {
 			log_debug("Client %d closed connection.", client_id);
 			report_unsent(dest_fd, length, nrOfBytesSent, message_buffer, "Client closed the connection");
@@ -1057,10 +1082,28 @@ public abstract class Abstract_Socket {
 		log_debug("leaving Abstract_Socket.send_outgoing()");
 	}
 
+	/**
+	 * Report message error. I recommend to use <code>log_error</code> function instead of this.
+	 * 
+	 * @param client_id the index of the connection
+	 * @param msg_length the message length
+	 * @param sent_length the actual sent message length
+	 * @param msg the message
+	 * @param error_text the error text for better debugging
+	 */
 	protected void report_error(final int client_id, final int msg_length, final int sent_length, byte[] msg, final String error_text) {
 		log_error("%s",error_text);
 	}
 
+	/**
+	 * Report unsent bytes of the message.
+	 * 
+	 * @param client_id the index of the connection
+	 * @param msg_length the message length
+	 * @param sent_length the actual sent message length
+	 * @param msg the message
+	 * @param error_text the error text for better debugging
+	 */
 	protected void report_unsent(final int client_id, final int msg_length, final int sent_length, byte[] msg, final String error_text) {
 		log_debug("%s",error_text);
 	}
@@ -1348,11 +1391,13 @@ public abstract class Abstract_Socket {
 			}
 		}
 	}
-
+	
 	/**
 	 * Called when a message is received.
 	 * 
-	 * 
+	 * @param message_buffer
+	 * @param length
+	 * @param client_id
 	 */
 	protected abstract void message_incoming(final byte[] message_buffer, final int length, final int client_id);
 
