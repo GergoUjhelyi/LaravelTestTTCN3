@@ -41,8 +41,10 @@ public abstract class Abstract_Socket {
 
 	private static final int AS_TCP_CHUNCK_SIZE = 4096;
 
+	//TODO: delete this unnecessary constant
 	private static final int NI_MAXHOST = 1024;
 
+	//TODO: delete this unnecessary constant
 	private static final int NI_MAXSERV = 32;
 
 	private boolean halt_on_connection_reset_set;
@@ -345,10 +347,8 @@ public abstract class Abstract_Socket {
 	 */
 	protected void Handle_Socket_Event(final SelectableChannel fd, final boolean is_readable, final boolean is_writable, final boolean is_error) {
 		log_debug("entering Abstract_Socket::Handle_Socket_Event(): fd: %s%s%s%s", fd.toString(), is_readable ? " readable" : "", is_writable ? " writable" : "", is_error ? " error" : "");
-
 		if (!fd.equals(listen_fd) && (is_readable || is_writable) && get_peer(fd, false) != null &&  get_peer(fd, false).reading_state != READING_STATES.STATE_DONT_RECEIVE) { /* on server the connection requests are handled after the user messages */
 			log_debug("receiving data");
-
 			int messageLength = receive_message_on_fd(fd);
 			if (messageLength == 0) { // peer disconnected
 				as_client_struct client_data = get_peer(fd, false);
@@ -383,7 +383,6 @@ public abstract class Abstract_Socket {
 				handle_message(fd);
 			}
 		}
-
 		if (fd.equals(listen_fd) && is_readable) {
 			// new connection request arrived
 			log_debug("waiting for accept");
@@ -394,7 +393,6 @@ public abstract class Abstract_Socket {
 			} catch (IOException e) {
 				log_error("Cannot accept connection at port");
 			}
-
 			as_client_struct client_data = peer_list_add_peer(newclient_fd);
 			Add_Fd_Read_Handler(newclient_fd); // Done here - as in case of error: remove_client expects the handler as added
 			log_debug("Abstract_Socket.Handle_Socket_Event(). Handler set to other fd %s", newclient_fd);
@@ -806,11 +804,9 @@ public abstract class Abstract_Socket {
 			try {
 				new_local_addr = new InetSocketAddress(InetAddress.getLocalHost(), Integer.valueOf(localService));
 			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log_error("%s", e.getMessage());
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log_error("%s", e.getMessage());
 			}
 		} else if (localHostname != null && localService == null) {
 			new_local_addr = new InetSocketAddress(localHostname, 0);
@@ -878,8 +874,7 @@ public abstract class Abstract_Socket {
 					try {
 						Thread.sleep(TCP_reconnect_delay);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						log_error("Interrupted during finishing connection: %s", e.getMessage());
 					}
 					socket_fd.finishConnect();
 					TCP_reconnect_counter--;
@@ -917,7 +912,6 @@ public abstract class Abstract_Socket {
 			try {
 				socket_fd.close();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				if (use_connection_ASPs){
 					client_connection_opened(-1);
 					return -1;
@@ -1108,6 +1102,9 @@ public abstract class Abstract_Socket {
 		log_debug("%s",error_text);
 	}
 
+	/**
+	 *  Check the mandatory config parameters are set.
+	 */
 	private void all_mandatory_configparameters_present() {
 		if(!use_connection_ASPs) {
 			if(server_mode) {
@@ -1126,7 +1123,11 @@ public abstract class Abstract_Socket {
 		user_all_mandatory_configparameters_present();
 	}
 
-	// Called when a client shall be removed
+	/**
+	 * Called when a client shall be removed.
+	 * 
+	 * @param fd the client or server socket
+	 */
 	protected void remove_client(SelectableChannel fd) {
 		log_debug("entering Abstract_Socket.remove_client(%s)", fd.toString());
 		if (!fd.equals(listen_fd)) {
@@ -1147,7 +1148,9 @@ public abstract class Abstract_Socket {
 		log_debug("leaving Abstract_Socket.remove_client(%s)", fd);
 	}
 
-	// Called when all clients shall be removed
+	/**
+	 * Called when all clients shall be removed
+	 */
 	protected void remove_all_clients() {
 		log_debug("entering Abstract_Socket.remove_all_clients");
 		if (peer_list_root != null) {
@@ -1156,7 +1159,6 @@ public abstract class Abstract_Socket {
 					remove_client(peer_list_root.get(i).tcp_socket);
 				}
 			}
-
 			while (!peer_list_root.isEmpty()) {
 				SocketChannel client_id = peer_list_get_first_peer();
 				if (client_id != null) {
@@ -1169,6 +1171,12 @@ public abstract class Abstract_Socket {
 		}
 	}
 
+	/**
+	 * Getter for client id.
+	 * 
+	 * @param fd SelectableChannel what searching for.
+	 * @return -1 if SelectableChannel is not in the connection list, or the index in the list
+	 */
 	protected int get_clientId_by_fd(final SelectableChannel fd) {
 		for (int i = 0; i < peer_list_root.size(); i++) {
 			if (peer_list_root.get(i).tcp_socket.equals(fd)) {
@@ -1178,42 +1186,92 @@ public abstract class Abstract_Socket {
 		return -1;
 	}
 
+	/**
+	 * Setter for ttcn_buffer_usercontrol parameter.
+	 * 
+	 * @param parameter_value new value
+	 */
 	protected void set_ttcn_buffer_usercontrol(final boolean parameter_value) {
 		ttcn_buffer_usercontrol = parameter_value;
 	}
 
+	/**
+	 * Setter for handle_half_close parameter.
+	 * 
+	 * @param parameter_value new value
+	 */
 	protected void set_handle_half_close(final boolean parameter_value) {
 		handle_half_close = parameter_value;
 	}
 
+	/**
+	 * Setter for server_mode parameter.
+	 * 
+	 * @param parameter_value new value
+	 */
 	protected void set_server_mode(final boolean parameter_value) {
 		server_mode = parameter_value;
 	}
 
+	/**
+	 * Getter for nagling parameter.
+	 * 
+	 * @return nagling
+	 */
 	protected boolean get_nagling() {
 		return nagling;
 	}
 
+	/**
+	 * Getter for use_non_blocking_socket parameter.
+	 * 
+	 * @return use_non_blocking_socket
+	 */
 	protected boolean get_use_non_blocking_socket() {
 		return use_non_blocking_socket;
 	}
 
+	/**
+	 * Getter for server_mode parameter.
+	 * 
+	 * @return true if server_mode is on
+	 */
 	protected boolean get_server_mode() {
 		return server_mode;
 	}
 
+	/**
+	 * Getter for socket_debugging parameter.
+	 * 
+	 * @return socket_debugging
+	 */
 	protected boolean get_socket_debugging() {
 		return socket_debugging;
 	}
 
+	/**
+	 * Getter for halt_on_connection_reset parameter.
+	 * 
+	 * @return halt_on_connection_reset
+	 */
 	protected boolean get_halt_on_connection_reset() {
 		return halt_on_connection_reset;
 	}
 
+	/**
+	 * Getter for use_connection_ASPs parameter.
+	 * 
+	 * @return true if use extra messages/logging in testport.
+	 */
 	protected boolean get_use_connection_ASPs() {
 		return use_connection_ASPs;
 	}
 
+	/**
+	 * Getter for get_handle_half_close parameter.
+	 * 
+	 * @return get_handle_half_close
+	 */
 	protected boolean get_handle_half_close() {
 		return handle_half_close;
 	}
@@ -1278,18 +1336,40 @@ public abstract class Abstract_Socket {
 		return "server_backlog";
 	}
 
+	/**
+	 * Add user_data to connection. Only needs in HTTPS connection.
+	 * 
+	 * @param id index of the connection
+	 * @return true if user_data successfully added to connection
+	 */
 	protected boolean add_user_data(SelectableChannel id) {
 		return true;
 	}
-
+	
+	/**
+	 * Remove user_data to connection. Only needs in HTTPS connection.
+	 * 
+	 * @param id index of the connection
+	 * @return true if user_data successfully added to connection
+	 */
 	protected boolean remove_user_data(SelectableChannel id) {
 		return true;
 	}
 
+	/**
+	 * Don't need this function, only presents because compatibility.
+	 * 
+	 * @return true
+	 */
 	protected boolean user_all_mandatory_configparameters_present() {
 		return true;
 	}
 
+	/**
+	 * Get TTCN_Buffer of the connection.
+	 * @param client_id the index of connection
+	 * @return the connection buffer
+	 */
 	protected TTCN_Buffer get_buffer(final int client_id) {
 		return get_peer(client_id, false).fd_buff;
 	}
@@ -1297,7 +1377,12 @@ public abstract class Abstract_Socket {
 	////////////////////////////////////////////////////////////////////////
 	/////    Peer handling functions
 	////////////////////////////////////////////////////////////////////////
-	// add peer to the list
+	/**
+	 * Add peer connection to the list. Client_id is different here, only for the C++ compatible parameter name.
+	 * 
+	 * @param client_id SocketChannel of the connection
+	 * @return client connection class
+	 */
 	protected as_client_struct peer_list_add_peer(final SocketChannel client_id) {
 		if (client_id == null) {
 			log_error("Invalid Client Id is given.");
@@ -1337,9 +1422,7 @@ public abstract class Abstract_Socket {
 
 	// number of peers in the list
 	protected int peer_list_get_nr_of_peers() {
-		int nr = 0;
-		nr = peer_list_root.size();
-
+		int nr = peer_list_root.size();
 		log_debug("Abstract_Socket.peer_list_get_nr_of_peers: Number of active peers = %d", nr);
 		return nr;
 	}
@@ -1391,7 +1474,7 @@ public abstract class Abstract_Socket {
 			}
 		}
 	}
-	
+
 	/**
 	 * Called when a message is received.
 	 * 
