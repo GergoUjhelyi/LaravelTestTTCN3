@@ -1101,7 +1101,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	}
 
 	public static void HTTP_decode_chunked_body(final TTCN_Buffer buffer, TitanOctetString body, final Decoding_Params decoding_params, final boolean socket_debugging, final String test_port_type, final String test_port_name) {
-		TitanOctetString chunk = new TitanOctetString("");
 		TitanCharString line = new TitanCharString("");
 		int chunk_size = 1;
 
