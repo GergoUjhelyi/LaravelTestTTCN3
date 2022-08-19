@@ -5,8 +5,20 @@ import org.eclipse.titan.runtime.core.TTCN_Buffer;
 import org.eclipse.titan.runtime.core.TitanInteger;
 import org.eclipse.titan.runtime.core.TitanOctetString;
 
+/**
+ * Utility class for HTTP testport related functions.
+ * 
+ * @author gujhelyi
+ *
+ */
 public class HTTPmsg__MessageLen_externalfunctions {
 
+	/**
+	 * Decode HTTP message and calculate its length.
+	 * 
+	 * @param stream the HTTP message in octet format
+	 * @return the length of the message or -1 if any error occurred
+	 */
 	public static TitanInteger f__HTTPMessage__len(final TitanOctetString stream) {
 		HTTPmsg__Types.HTTPMessage msg = new HTTPmsg__Types.HTTPMessage();
 		TTCN_Buffer buf_p = new TTCN_Buffer();
