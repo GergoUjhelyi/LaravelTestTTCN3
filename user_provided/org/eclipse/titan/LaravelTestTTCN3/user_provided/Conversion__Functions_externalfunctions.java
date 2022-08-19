@@ -14,8 +14,21 @@ import org.eclipse.titan.runtime.core.TtcnError;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * Utility class for conversion functions. Conversion between JSON route file data and JAVA/TTCN-3 objects.
+ * 
+ * @author gujhelyi
+ *
+ */
 public class Conversion__Functions_externalfunctions {
 	
+	/**
+	 * Static function to read file with the Laravel routes in JSON format and convert it to TTCN-3 type.
+	 * 
+	 * @param f__filename - the file name what the function read
+	 * @return list with the routes or an empty list
+	 * 
+	 */
 	public static Route__Obj__List ef__readRoutesFile(TitanCharString f__filename) {
 		if (!f__filename.is_bound() || f__filename.get_value().isEmpty()) {
 			//IllegalArgumentException would be good, but for testing an empty list is better
@@ -40,7 +53,6 @@ public class Conversion__Functions_externalfunctions {
 		}
 		//Need initialized list inside of the Route__Obj__List object
 		Route__Obj__List list = new Route__Obj__List(TitanNull_Type.NULL_VALUE);
-
 		for (int i = 0; i < routesArray.length(); i++) {
 			JSONObject JSONRouteObject = routesArray.getJSONObject(i);
 			Route__obj ttcnRouteObject = new Route__obj();
@@ -79,23 +91,24 @@ public class Conversion__Functions_externalfunctions {
 		return list;
 	}
 
+	/**
+	 * Split the parameter string at '|' characters.
+	 * 
+	 * @param methodNames the string to split
+	 * @return a list of strings in TTCN-3/Titan format
+	 */
 	public static PREGEN__RECORD__OF__CHARSTRING ef__splitMethod(final TitanCharString methodNames) {
 		if (methodNames == null) {
 			throw new TtcnError(new IllegalArgumentException("methodNames can't be null!"));
 		}
 		methodNames.must_bound("methodNames must be a value!");
-		
 		final String methodNameString = methodNames.get_value().toString();
 		final String splitOperator = "|";
-		
 		String[] splittedMethods = methodNameString.split(splitOperator);
 		PREGEN__RECORD__OF__CHARSTRING returnValue = new PREGEN__RECORD__OF__CHARSTRING(TitanNull_Type.NULL_VALUE);
-		
 		for (int i = 0; i < splittedMethods.length; i++) {
 			returnValue.get_at(i).operator_assign(splittedMethods[i]);
 		}
-		
 		return returnValue;
 	}
-
 }
