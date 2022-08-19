@@ -1345,7 +1345,7 @@ public abstract class Abstract_Socket {
 	protected boolean add_user_data(SelectableChannel id) {
 		return true;
 	}
-	
+
 	/**
 	 * Remove user_data to connection. Only needs in HTTPS connection.
 	 * 
@@ -1421,19 +1421,35 @@ public abstract class Abstract_Socket {
 		return null;
 	}
 
+	/**
+	 * Returns the connection object at the specified index.
+	 * 
+	 * @param client_fd the index
+	 * @param no_error throw an error
+	 * @return the connection object at the specified index
+	 */
 	// returns back the structure of the peer
 	protected as_client_struct get_peer(final int client_fd, final boolean no_error) {
 		return peer_list_root.get(client_fd);
 	}
 
-	// number of peers in the list
+	// 
+	/**
+	 * Number of peers in the list, and log out it.
+	 * 
+	 * @return the number of connections
+	 */
 	protected int peer_list_get_nr_of_peers() {
 		int nr = peer_list_root.size();
 		log_debug("Abstract_Socket.peer_list_get_nr_of_peers: Number of active peers = %d", nr);
 		return nr;
 	}
 
-	// channel of the first peer in the list
+	/**
+	 * Returns SocketChannel of the first peer connection in the list.
+	 * 
+	 * @return the first SocketChannel in the list
+	 */
 	protected SocketChannel peer_list_get_first_peer() {
 		log_debug("Abstract_Socket.peer_list_get_first_peer: Finding first peer of the peer array");
 		for (int i = 0; i < peer_list_root.size(); i++) {
@@ -1446,6 +1462,11 @@ public abstract class Abstract_Socket {
 		return null; // this indicates an empty list
 	}
 
+	/**
+	 * Returns SocketChannel of the last peer connection in the list.
+	 * 
+	 * @return the last SocketChannel in the list
+	 */
 	protected SocketChannel peer_list_get_last_peer() {
 		log_debug("Abstract_Socket.peer_list_get_last_peer: Finding last peer of the peer array");
 		if (peer_list_root.isEmpty()) {
@@ -1460,6 +1481,11 @@ public abstract class Abstract_Socket {
 		return null;
 	}
 
+	/**
+	 * Remove the connection object at the specified index from the list.
+	 * 
+	 * @param client_id the index of the connection
+	 */
 	protected void peer_list_remove_peer(final int client_id) {
 		log_debug("Abstract_Socket.peer_list_remove_peer: Removing client %d from peer list", client_id);
 		if (client_id >= peer_list_root.size() || client_id < 0) {
@@ -1471,6 +1497,11 @@ public abstract class Abstract_Socket {
 		peer_list_root.remove(client_id);
 	}
 
+	/**
+	 * Remove the connection object at the specified index from the list.
+	 * 
+	 * @param fd the SelectableChannel of the connection
+	 */
 	protected void peer_list_remove_peer(final SelectableChannel fd) {
 		if (peer_list_root != null && !peer_list_root.isEmpty()) {
 			for (int i = 0; i < peer_list_root.size(); i++) {
@@ -1482,21 +1513,60 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 * Called when a message is received.
+	 * Called when a TCP message is received.
 	 * 
-	 * @param message_buffer
-	 * @param length
-	 * @param client_id
+	 * @param message_buffer the message in byte array format
+	 * @param length the message length
+	 * @param client_id the connection index in the list
 	 */
 	protected abstract void message_incoming(final byte[] message_buffer, final int length, final int client_id);
 
+	/**
+	 * Add channel to the TTCN_Snapshots' selectors. The system will handle the incoming messages, doesn't need to block the running.
+	 * 
+	 * @param fd the connection channel what we want to add to the selector
+	 */
 	protected abstract void Add_Fd_Read_Handler(SelectableChannel fd);
+
+	/**
+	 * Add channel to the TTCN_Snapshots' selectors. The system will handle the outgoing messages, doesn't need to block the running.
+	 * 
+	 * @param fd the connection channel what we want to add to the selector
+	 */
 	protected abstract void Add_Fd_Write_Handler(SelectableChannel fd);
+
+	/**
+	 * Remove the channel from the TTCN_Snapshots' selectors what selector was watching the incoming messages. Prefer to use <code>Handler_Uninstall</code> function.
+	 * 
+	 * @param fd the connection channel what we want to remove from the selector
+	 */
 	protected abstract void Remove_Fd_Read_Handler(SelectableChannel fd);
+
+	/**
+	 * Remove the channel from the TTCN_Snapshots' selectors what selector was watching the outgoing messages. Prefer to use <code>Handler_Uninstall</code> function.
+	 * 
+	 * @param fd the connection channel what we want to remove from the selector
+	 */
 	protected abstract void Remove_Fd_Write_Handler(SelectableChannel fd);
+
+	/**
+	 * Remove the channel from the TTCN_Snapshots' selectors what selectors was watching the outgoing and incoming messages. Prefer to use <code>Handler_Uninstall</code> function.
+	 * 
+	 * @param fd the connection channel what we want to remove from the selectors
+	 */
 	protected abstract void Remove_Fd_All_Handlers(SelectableChannel fd);
+
+	/**
+	 * Remove all connection from TCN_Snapshot system. Call this function before you finish the testcase or disconnect the connection. 
+	 */
 	protected abstract void Handler_Uninstall();
 
+	/**
+	 * Class for TCP connection for can be handled by TTCN and Titan Ecosystem.
+	 * 
+	 * @author gujhelyi
+	 *
+	 */
 	public static class as_client_struct {
 		public byte[] user_data;
 		public TTCN_Buffer fd_buff;
@@ -1505,8 +1575,14 @@ public abstract class Abstract_Socket {
 		public READING_STATES reading_state;
 		public SocketChannel tcp_socket;
 
+		/**
+		 * Empty constructor.
+		 */
 		public as_client_struct() {} 
 
+		/**
+		 * Basic copy constructor.
+		 */
 		public as_client_struct(byte[] user_data, TTCN_Buffer fd_buff, InetSocketAddress clientAddr, TCP_STATES tcp_state, READING_STATES reading_state) {
 			this.user_data = user_data;
 			this.fd_buff = fd_buff;
