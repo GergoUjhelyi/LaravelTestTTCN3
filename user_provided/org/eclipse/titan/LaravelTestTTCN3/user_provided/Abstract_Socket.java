@@ -1381,7 +1381,7 @@ public abstract class Abstract_Socket {
 	 * Add peer connection to the list. Client_id is different here, only for the C++ compatible parameter name.
 	 * 
 	 * @param client_id SocketChannel of the connection
-	 * @return client connection class
+	 * @return client connection in a <code>as_client_struct</code> object
 	 */
 	protected as_client_struct peer_list_add_peer(final SocketChannel client_id) {
 		if (client_id == null) {
@@ -1402,7 +1402,13 @@ public abstract class Abstract_Socket {
 		return peer_list_root.get(peer_list_root.size() - 1);
 	}
 
-	// returns back the structure of the peer
+	/**
+	 * Returns back the object of the connection.
+	 * 
+	 * @param client_fd the channel what we looking for
+	 * @param no_error not throw error if client doesn't find in the connection list 
+	 * @return the connection object what has the SelectableChannel
+	 */
 	protected as_client_struct get_peer(final SelectableChannel client_fd, final boolean no_error) {
 		for (int i = 0; i < peer_list_root.size(); i++) {
 			if (peer_list_root.get(i).tcp_socket.equals(client_fd)) {
