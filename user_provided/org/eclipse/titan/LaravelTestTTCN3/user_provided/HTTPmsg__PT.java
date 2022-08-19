@@ -269,7 +269,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				return super.send_message_on_fd(client_id, send_par);
 			}
 		};
-		abstract_Socket.parameter_set(abstract_Socket.use_connection_ASPs_name(), "yes");
+		abstract_Socket.parameter_set(Abstract_Socket.USE_CONNECTION_ASPS_NAME, "yes");
 		abstract_Socket.parameter_set(server_backlog_name(), "1024");
 		use_notification_ASPs = false;
 		abstract_Socket.set_ttcn_buffer_usercontrol(true);
@@ -499,7 +499,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				return super.send_message_on_fd(client_id, send_par);
 			}
 		};
-		abstract_Socket.parameter_set(abstract_Socket.use_connection_ASPs_name(), "yes");
+		abstract_Socket.parameter_set(Abstract_Socket.USE_CONNECTION_ASPS_NAME, "yes");
 		abstract_Socket.parameter_set(server_backlog_name(), "1024");
 		use_notification_ASPs = false;
 		abstract_Socket.set_ttcn_buffer_usercontrol(true);
