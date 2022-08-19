@@ -41,12 +41,6 @@ public abstract class Abstract_Socket {
 
 	private static final int AS_TCP_CHUNCK_SIZE = 4096;
 
-	//TODO: delete this unnecessary constant
-	private static final int NI_MAXHOST = 1024;
-
-	//TODO: delete this unnecessary constant
-	private static final int NI_MAXSERV = 32;
-
 	private boolean halt_on_connection_reset_set;
 	private boolean halt_on_connection_reset;
 	private boolean client_TCP_reconnect;
