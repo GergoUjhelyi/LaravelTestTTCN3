@@ -41,6 +41,22 @@ public abstract class Abstract_Socket {
 
 	private static final int AS_TCP_CHUNCK_SIZE = 4096;
 
+	public static final String LOCAL_PORT_NAME = "serverPort";
+	public static final String REMOTE_ADDRESS_NAME = "destIPAddr";
+	public static final String LOCAL_ADDRESS_NAME = "serverIPAddr";
+	public static final String REMOTE_PORT_NAME =  "destPort";
+	public static final String AI_FAMILY_NAME = "ai_family";
+	public static final String USE_CONNECTION_ASPS_NAME = "use_connection_ASPs";
+	public static final String HALT_ON_CONNECTION_RESET_NAME = "halt_on_connection_reset";
+	public static final String CLIENT_TCP_RECONNECT_NAME = "client_TCP_reconnect";
+	public static final String TCP_RECONNECT_ATTEMPTS_NAME = "TCP_reconnect_attempts";
+	public static final String TCP_RECONNECT_DELAY_NAME = "TCP_reconnect_delay";
+	public static final String SERVER_MODE_NAME = "server_mode";
+	public static final String SOCKET_DEBUGGING_NAME = "socket_debugging";
+	public static final String NAGLING_NAME = "nagling";
+	public static final String USE_NON_BLOCKING_SOCKET_NAME = "use_non_blocking_socket";
+	public static final String SERVER_BACKLOG_NAME = "server_backlog";
+
 	private boolean halt_on_connection_reset_set;
 	private boolean halt_on_connection_reset;
 	private boolean client_TCP_reconnect;
@@ -216,48 +232,48 @@ public abstract class Abstract_Socket {
 	protected boolean parameter_set(final String parameter_name, final String parameter_value) {
 		log_debug("entering Abstract_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
 
-		if (parameter_name.equals(socket_debugging_name())) {
+		if (parameter_name.equals(SOCKET_DEBUGGING_NAME)) {
 			if (parameter_value.equalsIgnoreCase("yes")) {
 				socket_debugging = true;
 			} else if (parameter_value.equalsIgnoreCase("no")) {
 				socket_debugging = false;
 			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, socket_debugging_name());
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SOCKET_DEBUGGING_NAME);
 			}
-		} else if (parameter_name.equals(server_mode_name())) {
+		} else if (parameter_name.equals(SERVER_MODE_NAME)) {
 			if (parameter_value.equalsIgnoreCase("yes")) {
 				server_mode = true;
 			} else if (parameter_value.equalsIgnoreCase("no")) {
 				server_mode = false;
 			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, server_mode_name());
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SERVER_MODE_NAME);
 			}
-		} else if (parameter_name.equals(use_connection_ASPs_name())) {
+		} else if (parameter_name.equals(USE_CONNECTION_ASPS_NAME)) {
 			if (parameter_value.equalsIgnoreCase("yes")) {
 				use_connection_ASPs = true;
 			} else if (parameter_value.equalsIgnoreCase("no")) {
 				use_connection_ASPs = false;
 			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, use_connection_ASPs_name());
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, USE_CONNECTION_ASPS_NAME);
 			}
-		} else if (parameter_name.equals(halt_on_connection_reset_name())) {
+		} else if (parameter_name.equals(HALT_ON_CONNECTION_RESET_NAME)) {
 			halt_on_connection_reset_set = true;
 			if (parameter_value.equalsIgnoreCase("yes")) {
 				halt_on_connection_reset = true;
 			} else if (parameter_value.equalsIgnoreCase("no")) {
 				halt_on_connection_reset = false;
 			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, halt_on_connection_reset_name());
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, HALT_ON_CONNECTION_RESET_NAME);
 			}
-		} else if (parameter_name.equals(client_TCP_reconnect_name())) {
+		} else if (parameter_name.equals(CLIENT_TCP_RECONNECT_NAME)) {
 			if (parameter_value.equalsIgnoreCase("yes")) {
 				client_TCP_reconnect = true;
 			} else if (parameter_value.equalsIgnoreCase("no")) {
 				client_TCP_reconnect = false;
 			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, client_TCP_reconnect_name());
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, CLIENT_TCP_RECONNECT_NAME);
 			}
-		} else if (parameter_name.equals(TCP_reconnect_attempts_name())) {
+		} else if (parameter_name.equals(TCP_RECONNECT_ATTEMPTS_NAME)) {
 			try {
 				TCP_reconnect_attempts = Integer.valueOf(parameter_value);
 			} catch (NumberFormatException e) {
@@ -266,7 +282,7 @@ public abstract class Abstract_Socket {
 			if (TCP_reconnect_attempts <= 0) {
 				log_error("TCP_reconnect_attempts must be greater than 0, %d is given", TCP_reconnect_attempts);
 			}
-		} else if (parameter_name.equals(TCP_reconnect_delay_name())) {
+		} else if (parameter_name.equals(TCP_RECONNECT_DELAY_NAME)) {
 			try {
 				TCP_reconnect_delay = Integer.valueOf(parameter_value);
 			} catch (NumberFormatException e) {
@@ -275,11 +291,11 @@ public abstract class Abstract_Socket {
 			if (TCP_reconnect_delay < 0) {
 				log_error("TCP_reconnect_delay must not be less than 0, %d is given", TCP_reconnect_delay);
 			}
-		} else if (parameter_name.equals(remote_address_name())) {
+		} else if (parameter_name.equals(REMOTE_ADDRESS_NAME)) {
 			remote_host_name = parameter_value;
-		} else if (parameter_name.equals(local_address_name())) {
+		} else if (parameter_name.equals(LOCAL_ADDRESS_NAME)) {
 			local_host_name = parameter_value;
-		} else if (parameter_name.equals(remote_port_name())) {
+		} else if (parameter_name.equals(REMOTE_PORT_NAME)) {
 			try {
 				int a = Integer.valueOf(parameter_value);
 				if (a > 65535 || a < 0) {
@@ -290,7 +306,7 @@ public abstract class Abstract_Socket {
 			} catch (NumberFormatException e) {
 				log_error("Invalid input as port number given: %s", parameter_value);
 			}
-		} else if (parameter_name.equals(local_port_name())) {
+		} else if (parameter_name.equals(LOCAL_PORT_NAME)) {
 			try {
 				int a = Integer.valueOf(parameter_value);
 				if (a > 65535 || a < 0) {
@@ -301,21 +317,21 @@ public abstract class Abstract_Socket {
 			} catch (NumberFormatException e) {
 				log_error("Invalid input as port number given: %s", parameter_value);
 			}
-		} else if (parameter_name.equals(nagling_name())) {
+		} else if (parameter_name.equals(NAGLING_NAME)) {
 			if (parameter_value.equalsIgnoreCase("yes")) {
 				nagling = true;
 			} else if (parameter_value.equalsIgnoreCase("no")) {
 				nagling = false;
 			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, nagling_name());
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, NAGLING_NAME);
 			}
-		} else if (parameter_name.equals(use_non_blocking_socket_name())) {
+		} else if (parameter_name.equals(USE_NON_BLOCKING_SOCKET_NAME)) {
 			if (parameter_value.equalsIgnoreCase("yes")) {
 				use_non_blocking_socket = true;
 			} else if (parameter_value.equalsIgnoreCase("no")) {
 				use_non_blocking_socket = false;
 			}
-		} else if (parameter_name.equals(server_backlog_name())) {
+		} else if (parameter_name.equals(SERVER_BACKLOG_NAME)) {
 			try {
 				server_backlog = Integer.valueOf(parameter_value);
 			} catch (NumberFormatException e) {
@@ -1103,14 +1119,14 @@ public abstract class Abstract_Socket {
 		if(!use_connection_ASPs) {
 			if(server_mode) {
 				if(local_port_number == 0) {
-					log_error("%s is not defined in the configuration file", local_port_name());
+					log_error("%s is not defined in the configuration file", LOCAL_PORT_NAME);
 				}
 			} else { // client mode
 				if (remote_host_name == null) {
-					log_error("%s is not defined in the configuration file", remote_address_name());
+					log_error("%s is not defined in the configuration file", REMOTE_ADDRESS_NAME);
 				}
 				if(remote_port_number == 0){
-					log_error("%s is not defined in the configuration file", remote_port_name());
+					log_error("%s is not defined in the configuration file", REMOTE_PORT_NAME);
 				}
 			}
 		}
@@ -1268,66 +1284,6 @@ public abstract class Abstract_Socket {
 	 */
 	protected boolean get_handle_half_close() {
 		return handle_half_close;
-	}
-
-	protected String local_port_name() { 
-		return "serverPort";
-	}
-
-	protected String remote_address_name() { 
-		return "destIPAddr";
-	}
-
-	protected String local_address_name() {
-		return "serverIPAddr";
-	}
-
-	protected String remote_port_name() {
-		return "destPort";
-	}
-
-	protected String ai_family_name() {
-		return "ai_family";
-	}
-
-	protected String use_connection_ASPs_name() {
-		return "use_connection_ASPs";
-	}
-
-	protected String halt_on_connection_reset_name() {
-		return "halt_on_connection_reset";
-	}
-
-	protected String client_TCP_reconnect_name() { 
-		return "client_TCP_reconnect";
-	}
-
-	protected String TCP_reconnect_attempts_name() {
-		return "TCP_reconnect_attempts";
-	}
-
-	protected String TCP_reconnect_delay_name() {
-		return "TCP_reconnect_delay";
-	}
-
-	protected String server_mode_name() {
-		return "server_mode";
-	}
-
-	protected String socket_debugging_name() {
-		return "socket_debugging";
-	}
-
-	protected String nagling_name() {
-		return "nagling";
-	}
-
-	protected String use_non_blocking_socket_name() {
-		return "use_non_blocking_socket";
-	}
-
-	protected String server_backlog_name() {
-		return "server_backlog";
 	}
 
 	/**
