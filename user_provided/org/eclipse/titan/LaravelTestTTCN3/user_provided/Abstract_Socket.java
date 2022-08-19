@@ -1486,7 +1486,7 @@ public abstract class Abstract_Socket {
 	 * 
 	 * @param client_id the index of the connection
 	 */
-	protected void peer_list_remove_peer(final int client_id) {
+	protected synchronized void peer_list_remove_peer(final int client_id) {
 		log_debug("Abstract_Socket.peer_list_remove_peer: Removing client %d from peer list", client_id);
 		if (client_id >= peer_list_root.size() || client_id < 0) {
 			log_error("Invalid Client Id is given: %d.", client_id);
