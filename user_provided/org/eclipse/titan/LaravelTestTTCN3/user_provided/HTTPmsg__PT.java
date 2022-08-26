@@ -40,11 +40,11 @@ import org.eclipse.titan.runtime.core.TtcnError;
  * Now it needs for C++ compatibility. The reason I choose this solution is because C++ solution uses multiple
  * inheritence.
  * 
- * @author gujhelyi
+ * @author Gergo Ujhelyi
  *
  */
 public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
-	
+
 	public static final String SERVER_BACKLOG_NAME = "server_backlog";
 	public static final String USE_NOTIFICATION_ASPS_NAME = "use_notification_ASPs";
 	public static final String SOCKET_DEBUGGING_NAME = "http_debugging";
@@ -121,8 +121,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				try {
 					Install_Handler(Set.of(abstract_Socket.get_peer(fd, false).tcp_socket), null, 0.0);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log_error("Error during install handlers: %s", e.getMessage());
 				}
 			}
 
@@ -131,8 +130,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				try {
 					Install_Handler(null, Set.of(abstract_Socket.get_peer(fd, false).tcp_socket), 0.0);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log_error("Error during install handlers: %s", e.getMessage());
 				}
 			}
 
@@ -161,8 +159,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 					}
 					TTCN_Snapshot.channelMap.get().remove(fd);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log_error("Error during uninstall handlers: %s", e.getMessage());
 				}
 			}
 
@@ -171,8 +168,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				try {
 					Uninstall_Handler();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log_error("Error during uninstall handlers: %s", e.getMessage());
 				}
 			}
 
@@ -229,15 +225,12 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			@Override
 			protected boolean add_user_data(SelectableChannel id) {
 				log_debug("entering HTTPmsg__PT.add_user_data(client_id: %d, use_ssl: %s)", get_clientId_by_fd(id), (adding_client_connection && adding_ssl_connection) || (server_use_ssl && !adding_ssl_connection) ? "yes" : "no");
-
 				abstract_Socket.set_server_mode(!adding_client_connection);
-
 				if ((adding_client_connection && !adding_ssl_connection) || (!adding_client_connection && !server_use_ssl)) {
 					log_debug("leaving HTTPmsg__PT.add_user_data() with returning Abstract_Socket.add_user_data()");
 					return super.add_user_data(id);
 				} else {
 					log_debug("leaving HTTPmsg__PT.add_user_data() with returning SSL_Socket.add_user_data()");
-					//TODO: implement SSL
 					return super.add_user_data(id);
 				}
 			}
@@ -245,35 +238,27 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			@Override
 			protected boolean remove_user_data(SelectableChannel id) {
 				log_debug("entering HTTPmsg__PT.remove_user_data(client_id: %d", get_clientId_by_fd(id));
-				//TODO: implement SSL
 				log_debug("leaving HTTPmsg__PT.remove_user_data() with returning Abstract_Socket.remove_user_data()");
-
 				return super.remove_user_data(id);
 			}
 
 			@Override
 			protected int receive_message_on_fd(SelectableChannel fd) {
 				log_debug("entering HTTPmsg__PT.receive_message_on_fd(client_id: %d)", get_clientId_by_fd(fd));
-				//TODO: implement SSL
 				log_debug("leaving HTTPmsg__PT.receive_message_on_fd() with returning Abstract_Socket.receive_message_on_fd()");
-
 				return super.receive_message_on_fd(fd);
 			}
 
 			@Override
 			protected void remove_client(SelectableChannel fd) {
 				log_debug("entering HTTPmsg__PT.remove_client(client_id: %d)", get_clientId_by_fd(fd));
-
 				TTCN_Buffer buf_p = get_peer(fd, false).fd_buff;
-
 				while (buf_p.get_read_len() > 0) {
 					log_debug("HTTPmsg__PT.remove_client(): decoding next message, len: %d", buf_p.get_read_len());
 					if (!HTTP_decode(buf_p, get_clientId_by_fd(fd), true)) {
 						break;
 					}
 				}
-				//TODO: implement SSL
-
 				log_debug("leaving HTTPmsg__PT.remove_client() with returning Abstract_Socket.remove_client()");
 				super.remove_client(fd);
 			}
@@ -281,7 +266,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			@Override
 			protected int send_message_on_fd(SelectableChannel client_id, byte[] send_par) {
 				log_debug("entering HTTPmsg__PT.send_message_on_fd(client_id: %d)", get_clientId_by_fd(client_id));
-				//TODO: implement SSL
 				log_debug("leaving HTTPmsg__PT.send_message_on_fd() with returning Abstract_Socket.send_message_on_fd()");
 				return super.send_message_on_fd(client_id, send_par);
 			}
@@ -356,8 +340,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				try {
 					Install_Handler(Set.of(abstract_Socket.get_peer(fd, false).tcp_socket), null, 0.0);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log_error("Error during install handlers: %s", e.getMessage());
 				}
 			}
 
@@ -366,8 +349,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				try {
 					Install_Handler(null, Set.of(abstract_Socket.get_peer(fd, false).tcp_socket), 0.0);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log_error("Error during install handlers: %s", e.getMessage());
 				}
 			}
 
@@ -396,8 +378,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 					}
 					TTCN_Snapshot.channelMap.get().remove(fd);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log_error("Error during uninstall handlers: %s", e.getMessage());
 				}
 			}
 
@@ -406,8 +387,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				try {
 					Uninstall_Handler();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log_error("Error during uninstall handlers: %s", e.getMessage());
 				}
 			}
 
@@ -472,7 +452,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 					return super.add_user_data(id);
 				} else {
 					log_debug("leaving HTTPmsg__PT.add_user_data() with returning SSL_Socket.add_user_data()");
-					//TODO: implement SSL
 					return super.add_user_data(id);
 				}
 			}
@@ -480,7 +459,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			@Override
 			protected boolean remove_user_data(SelectableChannel id) {
 				log_debug("entering HTTPmsg__PT.remove_user_data(client_id: %d", get_clientId_by_fd(id));
-				//TODO: implement SSL
 				log_debug("leaving HTTPmsg__PT.remove_user_data() with returning Abstract_Socket.remove_user_data()");
 
 				return super.remove_user_data(id);
@@ -489,7 +467,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			@Override
 			protected int receive_message_on_fd(SelectableChannel fd) {
 				log_debug("entering HTTPmsg__PT.receive_message_on_fd(client_id: %d)", get_clientId_by_fd(fd));
-				//TODO: implement SSL
 				log_debug("leaving HTTPmsg__PT.receive_message_on_fd() with returning Abstract_Socket.receive_message_on_fd()");
 
 				return super.receive_message_on_fd(fd);
@@ -507,8 +484,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 						break;
 					}
 				}
-				//TODO: implement SSL
-
 				log_debug("leaving HTTPmsg__PT.remove_client() with returning Abstract_Socket.remove_client()");
 				super.remove_client(fd);
 			}
@@ -516,7 +491,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			@Override
 			protected int send_message_on_fd(SelectableChannel client_id, byte[] send_par) {
 				log_debug("entering HTTPmsg__PT.send_message_on_fd(client_id: %d)", get_clientId_by_fd(client_id));
-				//TODO: implement SSL
 				log_debug("leaving HTTPmsg__PT.send_message_on_fd() with returning Abstract_Socket.send_message_on_fd()");
 				return super.send_message_on_fd(client_id, send_par);
 			}
@@ -636,7 +610,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 		server_use_ssl = send_par.get_field_use__ssl().get_value();
 
-		//TODO: implement SSL
 		if (server_use_ssl) {
 			TtcnError.TtcnWarning("SSL not supported at this time in HTTP test port!");
 		}
@@ -1034,15 +1007,15 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	}
 
 	/**
-	 * Decode a HTTP headers from the da
+	 * Decode a HTTP message headers from the buffer.
 	 * 
-	 * @param buffer
-	 * @param headers
-	 * @param decoding_params
-	 * @param socket_debugging
-	 * @param resp
-	 * @param test_port_type
-	 * @param test_port_name
+	 * @param buffer what contains the HTTP message in byte format
+	 * @param headers TTCN-3 type what will store the decoded headers
+	 * @param decoding_params extra information about the decoded header
+	 * @param socket_debugging flag to check debugging is enabled
+	 * @param resp is a response message
+	 * @param test_port_type the test port type
+	 * @param test_port_name the test port name
 	 */
 	public static void HTTP_decode_header(TTCN_Buffer buffer, HTTPmsg__Types.HeaderLines headers, Decoding_Params decoding_params, final boolean socket_debugging, final boolean resp, final String test_port_type, final String test_port_name) {
 		TitanCharString cstr = new TitanCharString("");
@@ -1095,6 +1068,17 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		header_name = null;
 	}
 
+	/**
+	 * Decode a HTTP message body from the buffer.
+	 * 
+	 * @param buffer what contains the HTTP message in byte format
+	 * @param body the decoded body in hex format
+	 * @param decoding_params extra information about the decoded body
+	 * @param connection_closed flag to check is this the last message
+	 * @param socket_debugging flag to check debugging is enabled
+	 * @param test_port_type the test port type
+	 * @param test_port_name the test port name
+	 */
 	public static void HTTP_decode_body(final TTCN_Buffer buffer, TitanOctetString body, final Decoding_Params decoding_params, final boolean connection_closed, final boolean socket_debugging, final String test_port_type, final String test_port_name) {
 		if (buffer.get_read_len() > 0) {
 			log_debug(socket_debugging, test_port_type, test_port_name, "Decoding body, buffer length: %d", buffer.get_read_len());
@@ -1128,6 +1112,16 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		}
 	}
 
+	/**
+	 * Decode a chunked part of the HTTP message body from the buffer.
+	 * 
+	 * @param buffer what contains the HTTP message in byte format
+	 * @param body the decoded body in hex format
+	 * @param decoding_params extra information about the decoded body
+	 * @param socket_debugging flag to check debugging is enabled
+	 * @param test_port_type the test port type
+	 * @param test_port_name the test port name
+	 */
 	public static void HTTP_decode_chunked_body(final TTCN_Buffer buffer, TitanOctetString body, final Decoding_Params decoding_params, final boolean socket_debugging, final String test_port_type, final String test_port_name) {
 		TitanCharString line = new TitanCharString("");
 		int chunk_size = 1;
@@ -1194,6 +1188,18 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		}
 	}
 
+	/**
+	 * Read a line from the TTCN_Buffer.
+	 * 
+	 * @param buffer what contains the HTTP message in byte format
+	 * @param to TitanCharString to store the read line
+	 * @param concatenate_header_lines flag for concatenate headers
+	 * @return 1 if reading was successful,</br>
+	 *  -1 if error occurred,</br>
+	 *   0 if buffer is empty,</br>
+	 *   <code>BUFFER_FAIL</code> if buffer contains wrong message format,</br>
+	 *   <code>BUFFER_CRLF</code> if buffer starts with CRLF
+	 */
 	public static int get_line(TTCN_Buffer buffer, TitanCharString to, final boolean concatenate_header_lines) {
 		int i = 0;
 		final byte[] cc_to = buffer.get_read_data();
@@ -1247,6 +1253,12 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		}
 	}
 
+	/**
+	 * Set client id for the HTTP message.
+	 * 
+	 * @param msg the HTTP message
+	 * @param client_id the client id
+	 */
 	public static void f_setClientId(HTTPmsg__Types.HTTPMessage msg, final int client_id) {
 		switch (msg.get_selection()) {
 		case ALT_request:
@@ -1269,10 +1281,16 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		}
 	}
 
+	/**
+	 * Decode the whole HTTP message from the TTCN_Buffer
+	 * 
+	 * @param buffer what contains the HTTP message in byte format
+	 * @param client_id the client id what connection coming from
+	 * @param connection_closed  flag to check is this the last message
+	 * @return true if the decode was successful
+	 */
 	protected boolean HTTP_decode(final TTCN_Buffer buffer, final int client_id, final boolean connection_closed) {
-
 		HTTPmsg__Types.HTTPMessage msg = new HTTPMessage();
-
 		if (f_HTTP_decodeCommon(buffer, msg, connection_closed, abstract_Socket.get_socket_debugging(), abstract_Socket.test_port_name, abstract_Socket.test_port_type)) {
 			TTCN_Logger.log(Severity.DEBUG_TESTPORT, "HTTPmsg__PT.HTTP_decode, before calling incoming_message");
 			f_setClientId(msg,client_id);
@@ -1303,8 +1321,13 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		}
 	}
 
+	/**
+	 * Class for extra decoding informations.
+	 * 
+	 * @author Gergo Ujhelyi
+	 *
+	 */
 	public static class Decoding_Params {
-
 		public boolean non_persistent_connection;
 		public boolean chunked_body;
 		public int content_length;
