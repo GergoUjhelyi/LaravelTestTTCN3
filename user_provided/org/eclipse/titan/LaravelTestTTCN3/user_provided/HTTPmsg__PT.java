@@ -754,9 +754,15 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		abstract_Socket.log_debug("leaving HTTPmsg__PT.outgoing_send(Shutdown)");
 	}
 
+	/**
+	 * Encode TTCN-3 HTTP message into byte array and put into a TTCN_Buffer.
+	 * Use TTCN_Buffer instead of Java default buffers allows us to use TITAN/TTCN features.
+	 * 
+	 * @param msg the HTTP message what needs to be encoded into byte format
+	 * @param buf the buffer where we put the encoded HTTP message
+	 */
 	public static void f_HTTP_encodeCommon(final HTTPMessage msg, final TTCN_Buffer buf) {
 		buf.clear();
-
 		if (msg.get_selection() == HTTPMessage.union_selection_type.ALT_erronous__msg) {
 			buf.put_cs(msg.constGet_field_erronous__msg().constGet_field_msg());
 		} else {
@@ -767,7 +773,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			HTTPResponse__binary__body response_binary = null;
 			TitanCharString body = null;
 			TitanOctetString body_binary = null;
-
 			if (msg.get_selection() == HTTPMessage.union_selection_type.ALT_request) {
 				request = msg.constGet_field_request();
 				header = request.constGet_field_header();
@@ -819,14 +824,12 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				buf.put_cs(new TitanCharString(String.valueOf(response_binary.constGet_field_statustext())));
 				buf.put_cs(new TitanCharString("\r\n"));
 			}
-
 			for (int i = 0; i < header.size_of().get_int(); i++) {
 				buf.put_cs(header.constGet_at(i).constGet_field_header__name());
 				buf.put_cs(new TitanCharString(": "));
 				buf.put_cs(header.constGet_at(i).constGet_field_header__value());
 				buf.put_cs(new TitanCharString("\r\n"));
 			}
-
 			buf.put_cs(new TitanCharString("\r\n"));
 			if (body != null && body.lengthof().is_greater_than(0)) {
 				buf.put_cs(body);
@@ -836,8 +839,18 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		}
 	}
 
-	// returns with true if the buffer is not empty and it contain valid message
-	// Postcondition: if buffer contains valid message, msg will contain the first decoded HTTP message, the decoded part will be removed from the buffer
+	/**
+	 * Decode byte format messages into a HTTP message.
+	 * If buffer contains valid message, msg will contain the first decoded HTTP message, the decoded part will be removed from the buffer.
+	 * 
+	 * @param buffer what contains data in byte format
+	 * @param msg a HTTP message variable, where the function puts the decoded data
+	 * @param connection_closed flag to check is this the last message
+	 * @param socket_debugging flag to check debugging is enabled
+	 * @param test_port_type the test port type
+	 * @param test_port_name the test port name
+	 * @return true if the buffer is not empty and it contain valid message
+	 */
 	public static boolean f_HTTP_decodeCommon(TTCN_Buffer buffer, HTTPMessage msg, final boolean connection_closed, final boolean socket_debugging, final String test_port_type, final String test_port_name) {
 		TTCN_Logger.log(Severity.DEBUG_TESTPORT, "starting f_HTTP_decodeCommon ");
 		if (buffer.get_read_len() <= 0) {
@@ -918,7 +931,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 					break;
 				}
 			}
-
 			// Additional header lines
 			TTCN_Logger.log(Severity.DEBUG_TESTPORT, "Decoding the headers");
 			HTTP_decode_header(buffer, header, decoding_params, socket_debugging, isResponse, test_port_type, test_port_name);
@@ -929,15 +941,12 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 					decoding_params.content_length = 0;
 				}
 			}
-
 			if (decoding_params.isMessage) {
 				HTTP_decode_body(buffer, body, decoding_params, connection_closed, socket_debugging, test_port_type, test_port_name);
 			}
-
 			if (decoding_params.isMessage) {
 				TTCN_Logger.log(Severity.DEBUG_TESTPORT, "Message successfully decoded");
 				boolean foundBinaryCharacter = false;
-
 				byte[] ptr = body.get_value();
 				for (int i = 0; i < ptr.length && !foundBinaryCharacter; i++) {
 					if ((ptr[i] & 0xFF) > 0x7F) {
@@ -1008,7 +1017,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		default:
 			break;
 		}
-
 		if (decoding_params.error) {
 			if (buffer.get_read_len() > 0) {
 				msg.get_field_erronous__msg().get_field_msg().operator_assign(new TitanCharString(String.valueOf(buffer.get_read_data())));
@@ -1019,13 +1027,23 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			buffer.clear();
 			decoding_params.isMessage = true;
 		}
-
 		if (decoding_params.isMessage) {
 			buffer.cut();
 		}
 		return decoding_params.isMessage;
 	}
 
+	/**
+	 * Decode a HTTP headers from the da
+	 * 
+	 * @param buffer
+	 * @param headers
+	 * @param decoding_params
+	 * @param socket_debugging
+	 * @param resp
+	 * @param test_port_type
+	 * @param test_port_name
+	 */
 	public static void HTTP_decode_header(TTCN_Buffer buffer, HTTPmsg__Types.HeaderLines headers, Decoding_Params decoding_params, final boolean socket_debugging, final boolean resp, final String test_port_type, final String test_port_name) {
 		TitanCharString cstr = new TitanCharString("");
 		final char separator = ':';
