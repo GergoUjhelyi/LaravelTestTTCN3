@@ -33,7 +33,16 @@ import org.eclipse.titan.runtime.core.TitanNull_Type;
 import org.eclipse.titan.runtime.core.TitanOctetString;
 import org.eclipse.titan.runtime.core.TtcnError;
 
-
+/**
+ * Main class for the TTCN-3 HTTP testport. Contains all the function you need in a HTTP connection.
+ * 
+ * Almost the same Abstract_Socket used in constructor. In the future it can be reduced to one constructor.
+ * Now it needs for C++ compatibility. The reason I choose this solution is because C++ solution uses multiple
+ * inheritence.
+ * 
+ * @author gujhelyi
+ *
+ */
 public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 	private boolean adding_ssl_connection;
@@ -52,6 +61,10 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 	private static boolean report_lf = true;
 
+	/**
+	 * Default constructor: create an Abstract_socket and set up default values
+	 * 
+	 */
 	public HTTPmsg__PT() {
 		abstract_Socket = new Abstract_Socket() {
 			@Override
@@ -281,6 +294,11 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		last_msg = null;
 	}
 
+	/**
+	 * Constructor: create an Abstract_socket and set up default values with port port name.
+	 * 
+	 * @param par_port_name the testport name
+	 */
 	public HTTPmsg__PT(final String par_port_name) {
 		super(par_port_name);
 		abstract_Socket = new Abstract_Socket() {
@@ -512,6 +530,14 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	}
 
 	@Override
+	/**
+	 * Set the class parameters' from a config file.
+	 * 
+	 * @param parameter_name The parameter name.
+	 * @param parameter_value The parameter value.
+	 * @return <code>true</code> if the parameter name valid and and set to the given value.
+	 * @throws TtcnError in <code>log_error</code> functions.
+	 */
 	public void set_parameter(String parameter_name, String parameter_value) {
 		abstract_Socket.log_debug("entering HTTPmsg__PT.set_parameter(%s, %s)", parameter_name, parameter_value);
 		if (parameter_name.toLowerCase().equals(use_notification_ASPs_name().toLowerCase())) {
@@ -525,20 +551,30 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		}
 	}
 
+	/**
+	 * Open an HTTP/TCP socket, and register it.
+	 * 
+	 * @param system_port the port/socket name
+	 * 
+	 */
 	@Override
 	protected void user_map(String system_port) {
-		abstract_Socket.log_debug("entering HTTPmsg__PT.user_map(%s)",system_port);
+		abstract_Socket.log_debug("entering HTTPmsg__PT.user_map(%s)", system_port);
 		if (TTCN_Logger.log_this_event(Severity.DEBUG_TESTPORT)) {
 			if(!abstract_Socket.get_socket_debugging())
-				abstract_Socket.log_warning("%s: to switch on HTTP test port debugging, set the '*.%s.http_debugging := \"yes\" in the port's parameters.", get_name(), get_name());
+				abstract_Socket.log_warning("%s: to switch on HTTP test port debugging, set the '*.%s.http_debugging := \"yes\" in the port's parameters.", this.get_name(), this.get_name());
 		}
 		abstract_Socket.map_user();
 		abstract_Socket.log_debug("leaving HTTPmsg__PT.user_map()");
 	}
 
+	/**
+	 * Close HTTP/TCP socket.
+	 * 
+	 */
 	@Override
 	protected void user_unmap(String system_port) {
-		abstract_Socket.log_debug("entering HTTPmsg__PT.user_unmap(%s)",system_port);
+		abstract_Socket.log_debug("entering HTTPmsg__PT.user_unmap(%s)", system_port);
 
 		abstract_Socket.unmap_user();
 
@@ -547,14 +583,21 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 	@Override
 	protected void user_start() {
-
+		//Do nothing
 	}
 
 	@Override
 	protected void user_stop() {
-
+		//Do nothing
 	}
 
+	/**
+	 * Handle socket events.
+	 * 
+	 * @param channel the socket what has an event
+	 * @param is_readable the event is an incoming event
+	 * @param is_writeable the event is an outgoing event
+	 */
 	@Override
 	public void Handle_Event(SelectableChannel channel, boolean is_readable, boolean is_writeable) {
 		abstract_Socket.log_debug("-------------- entering HTTPmsg__PT.Handle_Event() - event received on a connection");
@@ -562,6 +605,11 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		abstract_Socket.log_debug("leaving HTTPmsg__PT.Handle_Event()");
 	}
 
+	/**
+	 * Send a Connect type message and open a client connection.
+	 * 
+	 * @param send_par the connect message what is coming from TTCN-3
+	 */
 	@Override
 	protected void outgoing_send(Connect send_par) {
 		abstract_Socket.log_debug("entering HTTPmsg__PT.outgoing_send(Connect)");
@@ -573,6 +621,11 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		abstract_Socket.log_debug("leaving HTTPmsg__PT.outgoing_send(Connect),client_id: %d", client_id);
 	}
 
+	/**
+	 * Send a Listen type message and open a sever listening connection.
+	 * 
+	 * @param send_par the listen message what is coming from TTCN-3
+	 */
 	@Override
 	protected void outgoing_send(Listen send_par) {
 		abstract_Socket.log_debug("entering HTTPmsg__PT.outgoing_send(Listen)");
@@ -594,6 +647,11 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		abstract_Socket.log_debug("leaving HTTPmsg__PT.outgoing_send(Listen)");
 	}
 
+	/**
+	 * Send a Close type message and close connection.
+	 * 
+	 * @param send_par the close message what is coming from TTCN-3
+	 */
 	@Override
 	protected void outgoing_send(Close send_par) {
 		abstract_Socket.log_debug("entering HTTPmsg__PT.outgoing_send(Close)");
@@ -607,6 +665,11 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		abstract_Socket.log_debug("leaving HTTPmsg__PT.outgoing_send(Close)");
 	}
 
+	/**
+	 * Send a Half__close type message and close connection.
+	 * 
+	 * @param send_par the Half__close message what is coming from TTCN-3
+	 */
 	@Override
 	protected void outgoing_send(Half__close send_par) {
 		abstract_Socket.log_debug("entering HTTPmsg__PT.outgoing_send(Half_close)");
@@ -620,6 +683,12 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		abstract_Socket.log_debug("leaving HTTPmsg__PT.outgoing_send(Half_close)");
 	}
 
+	/**
+	 * Send HTTP message in the socket. This function calls f_HTTP_encodeCommon function to encode message to byte format.
+	 * 
+	 * @param send_par the HTTP message what is coming from TTCN-3
+	 * 
+	 */
 	@Override
 	protected void outgoing_send(HTTPMessage send_par) {
 		abstract_Socket.log_debug("entering HTTPmsg__PT.outgoing_send(HTTPMessage)");
@@ -667,6 +736,11 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		abstract_Socket.log_debug("leaving HTTPmsg__PT.outgoing_send(HTTPMessage)");
 	}
 
+	/**
+	 * Send a Shutdown type message and close server connection.
+	 * 
+	 * @param send_par the Shutdown message what is coming from TTCN-3
+	 */
 	@Override
 	protected void outgoing_send(Shutdown send_par) {
 		abstract_Socket.log_debug("entering HTTPmsg__PT.outgoing_send(Shutdown)");
@@ -1258,11 +1332,11 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	/**
 	 * Log debug information function.
 	 * 
-	 * @param socket_debugging
-	 * @param test_port_type
-	 * @param test_port_name
-	 * @param fmt
-	 * @param args
+	 * @param socket_debugging debugging flag
+	 * @param test_port_type test port type
+	 * @param test_port_name test port name
+	 * @param fmt the format string
+	 * @param args the arguments for the format string
 	 */
 	public static void log_debug(final boolean socket_debugging, final String test_port_type, final String test_port_name, final String fmt, Object... args) {
 		if (socket_debugging) {
