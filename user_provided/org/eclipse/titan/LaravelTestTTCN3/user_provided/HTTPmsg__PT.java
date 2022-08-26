@@ -44,6 +44,10 @@ import org.eclipse.titan.runtime.core.TtcnError;
  *
  */
 public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
+	
+	public static final String SERVER_BACKLOG_NAME = "server_backlog";
+	public static final String USE_NOTIFICATION_ASPS_NAME = "use_notification_ASPs";
+	public static final String SOCKET_DEBUGGING_NAME = "http_debugging";
 
 	private boolean adding_ssl_connection;
 	private boolean adding_client_connection;
@@ -283,7 +287,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			}
 		};
 		abstract_Socket.parameter_set(Abstract_Socket.USE_CONNECTION_ASPS_NAME, "yes");
-		abstract_Socket.parameter_set(server_backlog_name(), "1024");
+		abstract_Socket.parameter_set(SERVER_BACKLOG_NAME, "1024");
 		use_notification_ASPs = false;
 		abstract_Socket.set_ttcn_buffer_usercontrol(true);
 		abstract_Socket.set_handle_half_close(true);
@@ -518,7 +522,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			}
 		};
 		abstract_Socket.parameter_set(Abstract_Socket.USE_CONNECTION_ASPS_NAME, "yes");
-		abstract_Socket.parameter_set(server_backlog_name(), "1024");
+		abstract_Socket.parameter_set(SERVER_BACKLOG_NAME, "1024");
 		use_notification_ASPs = false;
 		abstract_Socket.set_ttcn_buffer_usercontrol(true);
 		abstract_Socket.set_handle_half_close(true);
@@ -540,13 +544,13 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 */
 	public void set_parameter(String parameter_name, String parameter_value) {
 		abstract_Socket.log_debug("entering HTTPmsg__PT.set_parameter(%s, %s)", parameter_name, parameter_value);
-		if (parameter_name.toLowerCase().equals(use_notification_ASPs_name().toLowerCase())) {
+		if (parameter_name.toLowerCase().equals(USE_NOTIFICATION_ASPS_NAME.toLowerCase())) {
 			if (parameter_value.toLowerCase().equals("yes")) {
 				use_notification_ASPs = true;
 			} else if (parameter_value.toLowerCase().equals("no")) {
 				use_notification_ASPs = false;
 			} else {
-				abstract_Socket.log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, use_notification_ASPs_name());
+				abstract_Socket.log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, USE_NOTIFICATION_ASPS_NAME);
 			}
 		}
 	}
@@ -748,74 +752,6 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		abstract_Socket.close_listen_port();
 
 		abstract_Socket.log_debug("leaving HTTPmsg__PT.outgoing_send(Shutdown)");
-	}
-
-	protected String local_port_name() {
-		return "";
-	}
-
-	protected String remote_address_name() {
-		return "";
-	}
-
-	protected String local_address_name() {
-		return "";
-	}
-
-	protected String remote_port_name() {
-		return "";
-	}
-
-	protected String use_notification_ASPs_name() {
-		return "use_notification_ASPs";
-	}
-
-	protected String halt_on_connection_reset_name() {
-		return "";
-	}
-
-	protected String server_mode_name() {
-		return "";
-	}
-
-	protected String socket_debugging_name() {
-		return "http_debugging";
-	}
-
-	protected String nagling_name() {
-		return "";
-	}
-
-	protected String server_backlog_name() {
-		return "server_backlog";
-	}
-
-	protected String ssl_use_ssl_name() {
-		return "";
-	}
-
-	protected String ssl_use_session_resumption_name() {
-		return "";
-	}
-
-	protected String ssl_private_key_file_name() {
-		return "KEYFILE";
-	}
-
-	protected String ssl_trustedCAlist_file_name() {
-		return "TRUSTEDCALIST_FILE";
-	}
-
-	protected String ssl_certificate_file_name() {
-		return "CERTIFICATEFILE";
-	}
-
-	protected String ssl_password_name() {
-		return "PASSWORD";
-	}
-
-	protected String ssl_verifycertificate_name() {
-		return "VERIFYCERTIFICATE";
 	}
 
 	public static void f_HTTP_encodeCommon(final HTTPMessage msg, final TTCN_Buffer buf) {
