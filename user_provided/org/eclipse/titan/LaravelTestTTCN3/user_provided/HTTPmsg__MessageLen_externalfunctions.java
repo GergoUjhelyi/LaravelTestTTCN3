@@ -8,7 +8,7 @@ import org.eclipse.titan.runtime.core.TitanOctetString;
 /**
  * Utility class for HTTP testport related functions.
  * 
- * @author gujhelyi
+ * @author Gergo Ujhelyi
  *
  */
 public class HTTPmsg__MessageLen_externalfunctions {

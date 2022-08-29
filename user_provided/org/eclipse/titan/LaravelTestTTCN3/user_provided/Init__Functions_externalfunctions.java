@@ -9,6 +9,12 @@ import org.eclipse.titan.runtime.core.TitanBoolean;
 import org.eclipse.titan.runtime.core.TitanCharString;
 import org.eclipse.titan.runtime.core.TtcnError;
 
+/**
+ * Utility functions for routes, but it's only for CI/CD integration. Not used now.
+ * 
+ * @author Gergo Ujhelyi
+ *
+ */
 public class Init__Functions_externalfunctions {
 
 	//Checks the input server directory

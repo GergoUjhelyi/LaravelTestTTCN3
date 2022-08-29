@@ -12,7 +12,7 @@ import org.eclipse.titan.runtime.core.TitanOctetString;
  * 
  * Encoder-decoder Functions independent from sending and receiving.
  * 
- * @author gujhelyi
+ * @author Gergo Ujhelyi
  */
 public class HTTPmsg__Types_externalfunctions {
 

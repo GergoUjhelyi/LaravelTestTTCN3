@@ -17,7 +17,7 @@ import org.json.JSONObject;
 /**
  * Utility class for conversion functions. Conversion between JSON route file data and JAVA/TTCN-3 objects.
  * 
- * @author gujhelyi
+ * @author Gergo Ujhelyi
  *
  */
 public class Conversion__Functions_externalfunctions {
