@@ -29,7 +29,7 @@ import org.eclipse.titan.runtime.core.TTCN_Logger.Severity;
 import org.eclipse.titan.runtime.core.TtcnError;
 
 /**
- * The abstract class for TCP socket handling for TITAN Java testports.
+ * The abstract class for TCP socket handling for TITAN Java test ports.
  * 
  * @author Gergo Ujhelyi
  */
@@ -82,7 +82,7 @@ public abstract class Abstract_Socket {
 	private List<as_client_struct> peer_list_root;
 
 	/** 
-	 * Constructs the class without testport name and testport type.
+	 * Constructs the class without test port name and test port type.
 	 */
 	public Abstract_Socket() {
 		server_mode = false;
@@ -108,10 +108,10 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 * Constructs the class with testport name and testport type.
+	 * Constructs the class with test port name and test port type.
 	 * 
-	 * @param test_port_type the type of the testport
-	 * @param test_port_name the name of the testport
+	 * @param test_port_type the type of the test port
+	 * @param test_port_name the name of the test port
 	 */
 	public Abstract_Socket(final String test_port_type, final String test_port_name) {
 		this.test_port_type = test_port_type;
@@ -221,7 +221,7 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 * Set the class parameters' from a config file.
+	 * Set the class parameters' from a configuration file.
 	 * Shall be called from <code>set_parameter</code> function.
 	 * 
 	 * @param parameter_name The parameter name.
@@ -491,7 +491,7 @@ public abstract class Abstract_Socket {
 
 	/**
 	 * Get the message header descriptor. By default the function returns <code>null</code>.
-	 * Need to specify in every protocol or testport what uses this class.
+	 * Need to specify in every protocol or test port what uses this class.
 	 * 
 	 * @return the descriptor of the message headers
 	 */
@@ -502,7 +502,7 @@ public abstract class Abstract_Socket {
 	/**
 	 * Called after a peer is connected.
 	 * 
-	 * Do nothing in here. Override in your testport implementation.
+	 * Do nothing in here. Override in your test port implementation.
 	 * 
 	 * @param client_id - int
 	 * @param host - String
@@ -758,7 +758,7 @@ public abstract class Abstract_Socket {
 	protected abstract void listen_port_opened(int port_number);
 
 	/**
-	 * Close listening/server socket and deregister from the Selector.
+	 * Close listening/server socket and unregister from the Selector.
 	 */
 	protected void close_listen_port() {
 		// close current listening port if it is alive
@@ -975,7 +975,7 @@ public abstract class Abstract_Socket {
 	/**
 	 * Called after a peer is disconnected.
 	 * 
-	 * peer_disconnected() needs to be overriden in test ports!
+	 * peer_disconnected() needs to be overridden in test ports!
 	 */
 	protected void peer_disconnected(SelectableChannel fd) {
 		if (!use_connection_ASPs) {
@@ -1113,7 +1113,7 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 *  Check the mandatory config parameters are set.
+	 *  Check the mandatory configuration parameters are set.
 	 */
 	private void all_mandatory_configparameters_present() {
 		if(!use_connection_ASPs) {
@@ -1271,7 +1271,7 @@ public abstract class Abstract_Socket {
 	/**
 	 * Getter for use_connection_ASPs parameter.
 	 * 
-	 * @return true if use extra messages/logging in testport.
+	 * @return true if use extra messages/logging in test port.
 	 */
 	protected boolean get_use_connection_ASPs() {
 		return use_connection_ASPs;
@@ -1507,14 +1507,14 @@ public abstract class Abstract_Socket {
 	protected abstract void Remove_Fd_All_Handlers(SelectableChannel fd);
 
 	/**
-	 * Remove all connection from TCN_Snapshot system. Call this function before you finish the testcase or disconnect the connection. 
+	 * Remove all connection from TCN_Snapshot system. Call this function before you finish the test case or disconnect the connection. 
 	 */
 	protected abstract void Handler_Uninstall();
 
 	/**
 	 * Class for TCP connection for can be handled by TTCN and Titan Ecosystem.
 	 * 
-	 * @author gujhelyi
+	 * @author Gergo Ujhelyi
 	 *
 	 */
 	public static class as_client_struct {

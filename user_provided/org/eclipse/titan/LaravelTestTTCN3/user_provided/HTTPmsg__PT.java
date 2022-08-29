@@ -34,11 +34,11 @@ import org.eclipse.titan.runtime.core.TitanOctetString;
 import org.eclipse.titan.runtime.core.TtcnError;
 
 /**
- * Main class for the TTCN-3 HTTP testport. Contains all the function you need in a HTTP connection.
+ * Main class for the TTCN-3 HTTP test port. Contains all the function you need in a HTTP connection.
  * 
  * Almost the same Abstract_Socket used in constructor. In the future it can be reduced to one constructor.
  * Now it needs for C++ compatibility. The reason I choose this solution is because C++ solution uses multiple
- * inheritence.
+ * inheritance.
  * 
  * @author Gergo Ujhelyi
  *
@@ -285,7 +285,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	/**
 	 * Constructor: create an Abstract_socket and set up default values with port port name.
 	 * 
-	 * @param par_port_name the testport name
+	 * @param par_port_name the test port name
 	 */
 	public HTTPmsg__PT(final String par_port_name) {
 		super(par_port_name);
@@ -509,7 +509,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 	@Override
 	/**
-	 * Set the class parameters' from a config file.
+	 * Set the class parameters' from a configuration file.
 	 * 
 	 * @param parameter_name The parameter name.
 	 * @param parameter_value The parameter value.
@@ -814,7 +814,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 	/**
 	 * Decode byte format messages into a HTTP message.
-	 * If buffer contains valid message, msg will contain the first decoded HTTP message, the decoded part will be removed from the buffer.
+	 * If buffer contains valid message, message will contain the first decoded HTTP message, the decoded part will be removed from the buffer.
 	 * 
 	 * @param buffer what contains data in byte format
 	 * @param msg a HTTP message variable, where the function puts the decoded data
