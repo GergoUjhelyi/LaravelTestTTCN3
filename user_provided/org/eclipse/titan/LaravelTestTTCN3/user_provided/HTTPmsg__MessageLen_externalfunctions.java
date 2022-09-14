@@ -20,6 +20,10 @@ public class HTTPmsg__MessageLen_externalfunctions {
 	 * @return the length of the message or -1 if any error occurred
 	 */
 	public static TitanInteger f__HTTPMessage__len(final TitanOctetString stream) {
+		if (stream == null) {
+			//Don't cause error.
+			return new TitanInteger(-1);
+		}
 		HTTPmsg__Types.HTTPMessage msg = new HTTPmsg__Types.HTTPMessage();
 		TTCN_Buffer buf_p = new TTCN_Buffer();
 		buf_p.put_os(stream);
