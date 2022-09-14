@@ -1531,7 +1531,7 @@ public abstract class Abstract_Socket {
 		public as_client_struct() {} 
 
 		/**
-		 * Basic copy constructor.
+		 * Basic constructor.
 		 */
 		public as_client_struct(byte[] user_data, TTCN_Buffer fd_buff, InetSocketAddress clientAddr, TCP_STATES tcp_state, READING_STATES reading_state) {
 			this.user_data = user_data;
