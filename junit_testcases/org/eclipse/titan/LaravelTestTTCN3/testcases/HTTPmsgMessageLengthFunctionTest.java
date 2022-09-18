@@ -14,14 +14,14 @@ import org.eclipse.titan.runtime.core.TtcnError;
 import org.junit.jupiter.api.Test;
 
 public class HTTPmsgMessageLengthFunctionTest {
-	
+
 	protected static final String TEST_RESOURCES_DIR = System.getProperty("user.dir") + File.separatorChar + "test_resources" + File.separatorChar;
 
 	@Test
 	public void HTTPMessageLenFunctionNullTest() {
 		assertEquals(-1, HTTPmsg__MessageLen_externalfunctions.f__HTTPMessage__len(null).get_int());
 	}
-	
+
 	@Test
 	public void HTTPMessageLenFunctionEmptyTest() {
 		assertThrows(TtcnError.class, () -> HTTPmsg__MessageLen_externalfunctions.f__HTTPMessage__len(new TitanOctetString()).get_int());
@@ -48,7 +48,7 @@ public class HTTPmsgMessageLengthFunctionTest {
 			fail("IOException occured: " + e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void HTTPMessageLenFunctionValidRequestTestwithLowerCase() {
 		Path path = Paths.get(TEST_RESOURCES_DIR + "test_http_request.txt");
@@ -60,7 +60,7 @@ public class HTTPmsgMessageLengthFunctionTest {
 			fail("IOException occured: " + e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void HTTPMessageLenFunctionValidRequestTestwithUpperCase() {
 		Path path = Paths.get(TEST_RESOURCES_DIR + "test_http_request.txt");
