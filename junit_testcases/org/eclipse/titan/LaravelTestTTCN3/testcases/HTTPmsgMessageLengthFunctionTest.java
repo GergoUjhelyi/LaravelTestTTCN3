@@ -48,4 +48,28 @@ public class HTTPmsgMessageLengthFunctionTest {
 			fail("IOException occured: " + e.getMessage());
 		}
 	}
+	
+	@Test
+	public void HTTPMessageLenFunctionValidRequestTestwithLowerCase() {
+		Path path = Paths.get(TEST_RESOURCES_DIR + "test_http_request.txt");
+		try {
+			String readedRequest = Files.readString(path).toLowerCase();
+			TitanOctetString testRequestInOctet = new TitanOctetString(readedRequest.getBytes());
+			assertEquals(690, HTTPmsg__MessageLen_externalfunctions.f__HTTPMessage__len(testRequestInOctet).get_int());
+		} catch (IOException e) {
+			fail("IOException occured: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void HTTPMessageLenFunctionValidRequestTestwithUpperCase() {
+		Path path = Paths.get(TEST_RESOURCES_DIR + "test_http_request.txt");
+		try {
+			String readedRequest = Files.readString(path).toUpperCase();
+			TitanOctetString testRequestInOctet = new TitanOctetString(readedRequest.getBytes());
+			assertEquals(690, HTTPmsg__MessageLen_externalfunctions.f__HTTPMessage__len(testRequestInOctet).get_int());
+		} catch (IOException e) {
+			fail("IOException occured: " + e.getMessage());
+		}
+	}
 }
