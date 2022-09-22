@@ -20,7 +20,7 @@ public class HTTPmsgTypesExternalFunctionTest {
 	@Test
 	public void HTTPmsgTypesEncodeEmptyTest() {
 		HTTPMessage emptyMessage = new HTTPMessage();
-		assertEquals(2, HTTPmsg__Types_externalfunctions.enc__HTTPMessage(emptyMessage).lengthof().get_int()); // \r\n
+		assertEquals(2, HTTPmsg__Types_externalfunctions.enc__HTTPMessage(emptyMessage).lengthof().get_int()); // /r/n
 	}
 
 	@Test
