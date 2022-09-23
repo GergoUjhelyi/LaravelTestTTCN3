@@ -29,6 +29,11 @@ public class HTTPmsgTypesExternalFunctionTest {
 		testMessage.get_field_request().operator_assign(getTestRequest());
 		assertEquals(690 + (16*2) + 1, HTTPmsg__Types_externalfunctions.enc__HTTPMessage(testMessage).lengthof().get_int()); // 690 byte data, 16 /r/n sequence, 1 /r/n between headers and body
 	}
+	
+	@Test
+	public void HTTPmsgTypesDecodeNullTest() {
+		assertEquals(-1, HTTPmsg__Types_externalfunctions.dec__HTTPMessage(null, null, null).get_int());
+	}
 
 	@Test
 	public void testDec__HTTPMessage() {
