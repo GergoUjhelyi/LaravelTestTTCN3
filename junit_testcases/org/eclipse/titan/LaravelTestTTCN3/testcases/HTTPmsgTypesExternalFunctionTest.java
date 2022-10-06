@@ -3,11 +3,11 @@ package org.eclipse.titan.LaravelTestTTCN3.testcases;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.eclipse.titan.LaravelTestTTCN3.generated.HTTPmsg__Types.HTTPMessage;
+import org.eclipse.titan.LaravelTestTTCN3.generated.HTTPmsg__Types.HTTPMessage.union_selection_type;
 import org.eclipse.titan.LaravelTestTTCN3.generated.HTTPmsg__Types.HTTPRequest;
 import org.eclipse.titan.LaravelTestTTCN3.generated.HTTPmsg__Types.HeaderLine;
 import org.eclipse.titan.LaravelTestTTCN3.generated.HTTPmsg__Types.HeaderLines;
 import org.eclipse.titan.LaravelTestTTCN3.user_provided.HTTPmsg__Types_externalfunctions;
-import org.eclipse.titan.runtime.core.TTCN_Buffer;
 import org.eclipse.titan.runtime.core.TitanBoolean;
 import org.eclipse.titan.runtime.core.TitanCharString;
 import org.eclipse.titan.runtime.core.TitanOctetString;
@@ -33,45 +33,35 @@ public class HTTPmsgTypesExternalFunctionTest {
 		testMessage.get_field_request().operator_assign(getTestRequest());
 		assertEquals(690 + (16*2) + 1, HTTPmsg__Types_externalfunctions.enc__HTTPMessage(testMessage).lengthof().get_int()); // 690 byte data, 16 /r/n sequence, 1 /r/n between headers and body
 	}
-	
+
 	@Test
 	public void HTTPmsgTypesDecodeNullTest() {
 		assertEquals(-1, HTTPmsg__Types_externalfunctions.dec__HTTPMessage(null, null, null).get_int());
 	}
-	
+
 	@Test
 	public void HTTPmsgTypesDecodeEmptyTest() {
 		assertThrows(TtcnError.class, () -> HTTPmsg__Types_externalfunctions.dec__HTTPMessage(new TitanOctetString(), new HTTPMessage(), new TitanBoolean(false)));
 	}
 
 	@Test
-	public void testDec__HTTPMessage() {
+	public void HTTPmsgTypesDecodeTest() {
 		TitanOctetString testMessage = new TitanOctetString("474554202F20485454502F312E310D0A4163636570743A20746578742F68746D6C2C6170706C69636174696F6E2F7868746D6C2B786D6C2C6170706C69636174696F6E2F786D6C3B713D302E392C696D6167652F617669662C696D6167652F776562702C696D6167652F61706E672C2A2F2A3B713D302E382C6170706C69636174696F6E2F7369676E65642D65786368616E67653B763D62333B713D302E390D0A4163636570742D456E636F64696E673A20677A69702C206465666C6174652C2062720D0A4163636570742D4C616E67756167653A2068752C656E3B713D302E390D0A4163636570742D4C616E67756167653A2068752C656E3B713D302E390D0A43616368652D436F6E74726F6C3A206D61782D6167653D300D0A436F6E6E656374696F6E3A206B6565702D616C6976650D0A436F6F6B69653A205048505345535349443D687230356E753536646972693834626C306D3638746864706C650D0A486F73743A207777772E656C74652E68750D0A5365632D46657463682D446573743A20646F63756D656E740D0A5365632D46657463682D4D6F64653A206E617669676174650D0A5365632D46657463682D536974653A206E6F6E650D0A5365632D46657463682D557365723A203F310D0A557365722D4167656E743A204D6F7A696C6C612F352E30202857696E646F7773204E542031302E303B2057696E36343B2078363429204170706C655765624B69742F3533372E333620284B48544D4C2C206C696B65204765636B6F29204368726F6D652F3130352E302E302E30205361666172692F3533372E33360D0A7365632D63682D75613A2022476F6F676C65204368726F6D65223B763D22313035222C20224E6F7429413B4272616E64223B763D2238222C20224368726F6D69756D223B763D22313035220D0A7365632D63682D75612D6D6F62696C653A203F300D0A7365632D63682D75612D706C6174666F726D3A202257696E646F7773220D0A0D0A");
 		HTTPMessage actualMessage = new HTTPMessage();
 		HTTPmsg__Types_externalfunctions.dec__HTTPMessage(testMessage, actualMessage, new TitanBoolean(false));
 		HTTPRequest exceptedRequest = getTestRequest();
+		if (!actualMessage.ischosen(union_selection_type.ALT_request)) {
+			fail("Message should be an HTTP Request");
+		}
 		assertTrue(actualMessage.get_field_request().constGet_field_method().operator_equals(exceptedRequest.constGet_field_method()));
 		assertTrue(actualMessage.get_field_request().constGet_field_uri().operator_equals(exceptedRequest.constGet_field_uri()));
-		/*assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();
-		assertTrue();*/
+		assertTrue(actualMessage.get_field_request().constGet_field_version__major().operator_equals(exceptedRequest.constGet_field_version__major()));
+		assertTrue(actualMessage.get_field_request().constGet_field_version__minor().operator_equals(exceptedRequest.constGet_field_version__minor()));
+		for (int i = 0; i < actualMessage.get_field_request().constGet_field_header().size_of().get_int(); i++) {
+			assertTrue(actualMessage.get_field_request().constGet_field_header().constGet_at(i).constGet_field_header__name().operator_equals(exceptedRequest.constGet_field_header().constGet_at(i).constGet_field_header__name()));
+			assertTrue(actualMessage.get_field_request().constGet_field_header().constGet_at(i).constGet_field_header__value().operator_equals(exceptedRequest.constGet_field_header().constGet_at(i).constGet_field_header__value()));
+		}
+		assertTrue(actualMessage.get_field_request().constGet_field_body().operator_equals(exceptedRequest.constGet_field_body()));
 	}
 
 	private HTTPRequest getTestRequest() {
