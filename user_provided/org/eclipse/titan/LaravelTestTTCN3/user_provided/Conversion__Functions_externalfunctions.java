@@ -9,6 +9,7 @@ import org.eclipse.titan.LaravelTestTTCN3.generated.Route.Route__Obj__List;
 import org.eclipse.titan.LaravelTestTTCN3.generated.Route.Route__obj;
 import org.eclipse.titan.runtime.core.PreGenRecordOf.PREGEN__RECORD__OF__CHARSTRING;
 import org.eclipse.titan.runtime.core.TitanCharString;
+import org.eclipse.titan.runtime.core.TitanInteger;
 import org.eclipse.titan.runtime.core.TitanNull_Type;
 import org.eclipse.titan.runtime.core.TtcnError;
 import org.json.JSONArray;
@@ -110,5 +111,10 @@ public class Conversion__Functions_externalfunctions {
 			returnValue.get_at(i).operator_assign(splittedMethods[i]);
 		}
 		return returnValue;
+	}
+
+	public static String ef__getCSRFToken(TitanCharString httpserverhost, TitanInteger httpserverport) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
