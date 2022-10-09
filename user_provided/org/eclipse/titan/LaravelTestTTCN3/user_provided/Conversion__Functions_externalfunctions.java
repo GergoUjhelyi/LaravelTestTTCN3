@@ -112,7 +112,12 @@ public class Conversion__Functions_externalfunctions {
 		}
 		return returnValue;
 	}
-
+	/**
+	 * 
+	 * @param httpserverhost the server host name
+	 * @param httpserverport the server port number
+	 * @return the csrf token in String format
+	 */
 	public static String ef__getCSRFToken(TitanCharString httpserverhost, TitanInteger httpserverport) {
 		// TODO Auto-generated method stub
 		return null;
