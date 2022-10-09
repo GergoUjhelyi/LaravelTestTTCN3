@@ -35,9 +35,9 @@ import org.eclipse.titan.runtime.core.TtcnError;
  */
 public abstract class Abstract_Socket {
 
-	protected enum TCP_STATES { CLOSED, LISTEN, ESTABLISHED, CLOSE_WAIT, FIN_WAIT };
+	public enum TCP_STATES { CLOSED, LISTEN, ESTABLISHED, CLOSE_WAIT, FIN_WAIT };
 
-	protected enum READING_STATES { STATE_DONT_RECEIVE, STATE_WAIT_FOR_RECEIVE_CALLBACK, STATE_BLOCK_FOR_SENDING, STATE_DONT_CLOSE, STATE_NORMAL };
+	public enum READING_STATES { STATE_DONT_RECEIVE, STATE_WAIT_FOR_RECEIVE_CALLBACK, STATE_BLOCK_FOR_SENDING, STATE_DONT_CLOSE, STATE_NORMAL };
 
 	private static final int AS_TCP_CHUNCK_SIZE = 4096;
 
@@ -1531,7 +1531,7 @@ public abstract class Abstract_Socket {
 		public as_client_struct() {} 
 
 		/**
-		 * Basic copy constructor.
+		 * Basic constructor.
 		 */
 		public as_client_struct(byte[] user_data, TTCN_Buffer fd_buff, InetSocketAddress clientAddr, TCP_STATES tcp_state, READING_STATES reading_state) {
 			this.user_data = user_data;

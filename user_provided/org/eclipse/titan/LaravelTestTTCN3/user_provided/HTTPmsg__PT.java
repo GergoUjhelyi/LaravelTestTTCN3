@@ -735,6 +735,14 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 * @param buf the buffer where we put the encoded HTTP message
 	 */
 	public static void f_HTTP_encodeCommon(final HTTPMessage msg, final TTCN_Buffer buf) {
+		if (msg == null) {
+			TtcnError.TtcnWarning("HTTPMessage msg parameter is NULL in f_HTTP_encodeCommon function.");
+			return;
+		}
+		if (buf == null) {
+			TtcnError.TtcnWarning("TTCN_Buffer buf parameter is NULL in f_HTTP_encodeCommon function.");
+			return;
+		}
 		buf.clear();
 		if (msg.get_selection() == HTTPMessage.union_selection_type.ALT_erronous__msg) {
 			buf.put_cs(msg.constGet_field_erronous__msg().constGet_field_msg());
@@ -797,11 +805,13 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				buf.put_cs(new TitanCharString(String.valueOf(response_binary.constGet_field_statustext())));
 				buf.put_cs(new TitanCharString("\r\n"));
 			}
-			for (int i = 0; i < header.size_of().get_int(); i++) {
-				buf.put_cs(header.constGet_at(i).constGet_field_header__name());
-				buf.put_cs(new TitanCharString(": "));
-				buf.put_cs(header.constGet_at(i).constGet_field_header__value());
-				buf.put_cs(new TitanCharString("\r\n"));
+			if (header != null) {
+				for (int i = 0; i < header.size_of().get_int(); i++) {
+					buf.put_cs(header.constGet_at(i).constGet_field_header__name());
+					buf.put_cs(new TitanCharString(": "));
+					buf.put_cs(header.constGet_at(i).constGet_field_header__value());
+					buf.put_cs(new TitanCharString("\r\n"));
+				}
 			}
 			buf.put_cs(new TitanCharString("\r\n"));
 			if (body != null && body.lengthof().is_greater_than(0)) {

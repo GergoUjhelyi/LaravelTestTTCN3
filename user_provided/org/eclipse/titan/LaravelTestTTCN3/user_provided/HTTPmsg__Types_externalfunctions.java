@@ -70,6 +70,9 @@ public class HTTPmsg__Types_externalfunctions {
 	 * @return integer - the length of the remaining data which is not decoded yet.
 	 *********************************************************/
 	public static TitanInteger dec__HTTPMessage(TitanOctetString stream, HTTPMessage msg, TitanBoolean socket_debugging) {
+		if (stream == null || msg == null || socket_debugging == null) {
+			return new TitanInteger(-1);
+		}
 		TTCN_Logger.log(Severity.DEBUG_TESTPORT, "starting HTTPmsg__Types.dec__HTTPMessage");
 		TTCN_Buffer buf_p = new TTCN_Buffer();
 		buf_p.put_os(stream);
