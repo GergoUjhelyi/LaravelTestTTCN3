@@ -35,23 +35,29 @@ class UsageStatController extends Controller
      */
     public function store(Request $request)
     {
+        $request->flash();
+        $body_json = json_decode($request->getContent());
+
         $usage = new UsageStat;
 
-        $usage->plugin_id = $request->input('plugin_id');
-        $usage->plugin_version_qualifier = $request->input('plugin_version_qualifier');
-        $usage->plugin_version = $request->input('plugin_version');
-        $usage->os_version = $request->input('os_version');
-        $usage->os_arch = $request->input('os_arch');
-        $usage->eclipse_version = $request->input('eclipse_version');
-        $usage->eclipse_version_qualifier = $request->input('eclipse_version_qualifier');
-        $usage->user_id = $request->input('user_id');
-        $usage->java_version = $request->input('java_version');
-        $usage->os_name = $request->input('os_name');
-        $usage->info = $request->input('info');
+        $usage->plugin_id = $body_json->plugin_id;
+        $usage->plugin_version_qualifier = $body_json->plugin_version_qualifier;
+        $usage->plugin_version = $body_json->plugin_version;
+        $usage->os_version = $body_json->os_version;
+        $usage->os_arch = $body_json->os_arch;
+        $usage->eclipse_version = $body_json->eclipse_version;
+        $usage->eclipse_version_qualifier = $body_json->eclipse_version_qualifier;
+        $usage->user_id = $body_json->user_id;
+        $usage->java_version = $body_json->java_version;
+        $usage->os_name = $body_json->os_name;
+        $usage->info = $body_json->info;
 
-        $usage->save();
-
-        return $usage;
+        if ($usage->save()) {
+            return response("Successfully added!",200)->header('Content-Type', 'text/plain');
+        } else {
+            abort(404);
+        }
+        //return json_decode($request->getContent());
     }
 
     /**
