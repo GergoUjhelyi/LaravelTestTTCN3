@@ -23,3 +23,8 @@ Route::controller(UsageStatController::class)->group(function () {
     Route::post('/usage_stats', 'store');
     Route::get('usage_stats/{id}', 'show');
 });
+
+Route::get('/token', function (Request $request) {
+    $token = csrf_token();
+    return $token;
+});
