@@ -1,9 +1,10 @@
 module HTTP_Tests {
-
+import from HTTP_Test_Types all;
 import from HTTPmsg_PortType all;
 import from HTTPmsg_Types all;
-import from HTTP_Test_Types all;
 import from UsageStat_Type all;
+import from Utility_Functions all;
+
 
 //Default server parameters
 modulepar charstring HttpServerHost := "localhost";
@@ -91,7 +92,6 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
   if (T_timer.running) {
     T_timer.stop;
   }
-
   T_timer.start;
 
   alt {
@@ -161,7 +161,6 @@ testcase tc_laravel_get_first_element_by_id_json() runs on HTTP_client {
   if (T_timer.running) {
     T_timer.stop;
   }
-
   T_timer.start;
 
   alt {
@@ -225,7 +224,6 @@ testcase tc_laravel_get_unknown_element_by_id_json() runs on HTTP_client {
   if (T_timer.running) {
     T_timer.stop;
   }
-
   T_timer.start;
 
   alt {
@@ -233,6 +231,64 @@ testcase tc_laravel_get_unknown_element_by_id_json() runs on HTTP_client {
     [] client_port.receive(HTTPMessage:?) -> value v_HTTP_response {
       if (match(v_HTTP_response, recv_page_not_found_response)) {
         setverdict(pass, "Received HTTP NOT FOUND/404 response! Received: ", v_HTTP_response);
+      } else {
+        setverdict(fail, "Received wrong response! Received: ", v_HTTP_response);
+      }
+      client_port.send(c_close_message);
+      T_timer.stop;
+    }
+    //Receive a Half_Close response
+    [] client_port.receive(any_half_close) {
+      client_port.send(c_close_message);
+      T_timer.stop;
+      setverdict(fail);
+    }
+    //Receive something else
+    [] client_port.receive {
+      client_port.send(c_close_message);
+      T_timer.stop;
+      setverdict(fail);
+    }
+    //Receive nothing until the end of the timer T_timer
+    [] T_timer.timeout {
+      setverdict(fail);
+    }
+  };
+  //Unmap from server
+  unmap(self:client_port, system:client_port);
+}
+
+testcase tc_laravel_post_element() runs on HTTP_client {
+  var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
+  var HTTPMessage v_HTTP_response;
+  var HeaderLines v_post_headers := {
+    { header_name:= "Connection", header_value:= "close" },
+    { header_name:= "Accept", header_value:= "application/json, application/javascript"},
+    { header_name:= "X-CSRF-TOKEN", header_value:= ef_getCSRFToken(HttpServerHost, HttpServerPort) }
+  };
+  var HTTPMessage v_post_request := { request := { method := "POST", uri:= "/usage_stats", version_major:= 1, version_minor:= 1, header:= v_post_headers, body:= ef_getJSONFormatPOSTRequestBody() } };
+
+  //Map to server
+  map(self:client_port, system:client_port);
+
+  //Send HTTP connection
+  client_port.send(v_connection_message);
+
+  timer T_timer := 4.0;
+
+  //Send HTTP request
+  client_port.send( v_post_request );
+
+  if (T_timer.running) {
+    T_timer.stop;
+  }
+  T_timer.start;
+
+  alt {
+    //Receive a HTTP message
+    [] client_port.receive(HTTPMessage:?) -> value v_HTTP_response {
+      if (match(v_HTTP_response, recv_ok_response_from_post)) {
+        setverdict(pass, "Received HTTP OK/200 response! Received: ", v_HTTP_response);
       } else {
         setverdict(fail, "Received wrong response! Received: ", v_HTTP_response);
       }
