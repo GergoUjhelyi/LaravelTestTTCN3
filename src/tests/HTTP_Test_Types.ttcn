@@ -26,6 +26,18 @@ template HTTPMessage recv_ok_response := {
   }
 };
 
+template HTTPMessage recv_ok_response_from_post := {
+  response:= {
+    client_id:= ?,
+    version_major:= ?,
+    version_minor:= ?,
+    statuscode:= 200,
+    statustext:= pattern "*OK*",
+    header:= ?,
+    body := "Successfully added!"
+  }
+};
+
 //Template to match with HTTP 404 Response
 template HTTPMessage recv_page_not_found_response := {
   response := {
