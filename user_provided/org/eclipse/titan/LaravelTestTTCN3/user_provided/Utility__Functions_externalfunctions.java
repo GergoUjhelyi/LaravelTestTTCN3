@@ -1,12 +1,18 @@
 package org.eclipse.titan.LaravelTestTTCN3.user_provided;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.eclipse.titan.LaravelTestTTCN3.generated.Route.Route__Obj__List;
 import org.eclipse.titan.LaravelTestTTCN3.generated.Route.Route__obj;
+import org.eclipse.titan.LaravelTestTTCN3.generated.UsageStat__Type.Usage__Stat__response;
 import org.eclipse.titan.runtime.core.PreGenRecordOf.PREGEN__RECORD__OF__CHARSTRING;
 import org.eclipse.titan.runtime.core.TitanCharString;
 import org.eclipse.titan.runtime.core.TitanInteger;
@@ -21,8 +27,8 @@ import org.json.JSONObject;
  * @author Gergo Ujhelyi
  *
  */
-public class Conversion__Functions_externalfunctions {
-	
+public class Utility__Functions_externalfunctions {
+
 	/**
 	 * Static function to read file with the Laravel routes in JSON format and convert it to TTCN-3 type.
 	 * 
@@ -112,6 +118,7 @@ public class Conversion__Functions_externalfunctions {
 		}
 		return returnValue;
 	}
+
 	/**
 	 * 
 	 * @param httpserverhost the server host name
@@ -119,7 +126,29 @@ public class Conversion__Functions_externalfunctions {
 	 * @return the csrf token in String format
 	 */
 	public static String ef__getCSRFToken(TitanCharString httpserverhost, TitanInteger httpserverport) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			URL serverURL = new URL("http://" + httpserverhost.get_value().toString() + ':' + httpserverport.get_int() + "/token");
+			HttpURLConnection connection = (HttpURLConnection) serverURL.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("Content-Type", "application/json");
+			//5 seconds timeout
+			connection.setConnectTimeout(5000);
+			connection.setReadTimeout(5000);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.connect();
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuffer content = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				content.append(inputLine);
+			}
+			in.close();
+			connection.disconnect();
+			return content.toString();
+		} catch (IOException e) {
+			TtcnError.TtcnWarning("Error in ef__getCSRFToken: " + e.getMessage());
+			return "";
+		}
 	}
 }
