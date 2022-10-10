@@ -13,6 +13,8 @@ external function ef_splitMethod(in charstring p_methodString) return CharString
 
 external function ef_getCSRFToken(in charstring host, in integer portNumber) return charstring;
 
+external function ef_getJSONFormatPOSTRequestBody() return charstring;
+
 //TODO: maybe more header line needed
 const HeaderLines c_standard_header_lines := {
   { header_name:= "Connection", header_value:= "keep-alive" },
