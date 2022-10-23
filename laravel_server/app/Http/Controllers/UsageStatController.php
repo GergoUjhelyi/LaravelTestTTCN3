@@ -57,7 +57,6 @@ class UsageStatController extends Controller
         } else {
             abort(404);
         }
-        //return json_decode($request->getContent());
     }
 
     /**
