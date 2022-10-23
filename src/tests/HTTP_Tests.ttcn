@@ -263,7 +263,8 @@ testcase tc_laravel_post_element() runs on HTTP_client {
   var HTTPMessage v_HTTP_response;
   var HeaderLines v_post_headers := {
     { header_name:= "Connection", header_value:= "close" },
-    { header_name:= "Accept", header_value:= "application/json, application/javascript"},
+    { header_name:= "Content-Type", header_value:= "application/json" },
+    { header_name:= "Content-Length", header_value:= "332" },
     { header_name:= "X-CSRF-TOKEN", header_value:= ef_getCSRFToken(HttpServerHost, HttpServerPort) }
   };
   var HTTPMessage v_post_request := { request := { method := "POST", uri:= "/usage_stats", version_major:= 1, version_minor:= 1, header:= v_post_headers, body:= ef_getJSONFormatPOSTRequestBody() } };
