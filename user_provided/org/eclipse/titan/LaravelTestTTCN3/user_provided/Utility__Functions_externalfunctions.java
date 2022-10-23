@@ -5,14 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.eclipse.titan.LaravelTestTTCN3.generated.Route.Route__Obj__List;
 import org.eclipse.titan.LaravelTestTTCN3.generated.Route.Route__obj;
-import org.eclipse.titan.LaravelTestTTCN3.generated.UsageStat__Type.Usage__Stat__response;
 import org.eclipse.titan.runtime.core.PreGenRecordOf.PREGEN__RECORD__OF__CHARSTRING;
 import org.eclipse.titan.runtime.core.TitanCharString;
 import org.eclipse.titan.runtime.core.TitanInteger;
@@ -150,5 +148,21 @@ public class Utility__Functions_externalfunctions {
 			TtcnError.TtcnWarning("Error in ef__getCSRFToken: " + e.getMessage());
 			return "";
 		}
+	}
+
+	public static String ef__getJSONFormatPOSTRequestBody() {
+		JSONObject testJSONObject = new JSONObject();
+		testJSONObject.put("plugin_id", "TestID");
+		testJSONObject.put("plugin_version_qualifier", "bbbb");
+		testJSONObject.put("plugin_version", "22.10.23");
+		testJSONObject.put("os_version", "Plain Java");
+		testJSONObject.put("os_arch", "jvm");
+		testJSONObject.put("eclipse_version", "1.2.3");
+		testJSONObject.put("eclipse_version_qualifier", "Java with Json lib");
+		testJSONObject.put("user_id", "java_user");
+		testJSONObject.put("java_version", "18");
+		testJSONObject.put("os_name", "jvm os");
+		testJSONObject.put("info", "External function test 1.0");
+		return testJSONObject.toString(1);
 	}
 }
