@@ -142,7 +142,7 @@ testcase tc_laravel_get_all_json() runs on HTTP_client {
 **************************************/
 testcase tc_laravel_get_first_element_by_id_json() runs on HTTP_client {
   var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
-  var HTTPMessage v_http_get_first_instance := { request:= { method:= "GET", uri:= "/usage_stats/1", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
+  var HTTPMessage v_http_get_first_instance := { request:= { method:= "GET", uri:= "/api/usage_stats/1", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
   var HTTPMessage v_HTTP_response;
   var octetstring v_body;
   var charstring vl_char_body;
@@ -205,7 +205,7 @@ testcase tc_laravel_get_first_element_by_id_json() runs on HTTP_client {
 **************************************/
 testcase tc_laravel_get_unknown_element_by_id_json() runs on HTTP_client {
   var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
-  var HTTPMessage v_http_get_unknown_instance := { request:= { method:= "GET", uri:= "/usage_stats/10000", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
+  var HTTPMessage v_http_get_unknown_instance := { request:= { method:= "GET", uri:= "/api/usage_stats/10000", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
   var HTTPMessage v_HTTP_response;
   var octetstring v_body;
   var charstring vl_char_body;
@@ -268,10 +268,10 @@ testcase tc_laravel_post_element() runs on HTTP_client {
   var HeaderLines v_post_headers := {
     { header_name:= "Connection", header_value:= "close" },
     { header_name:= "Content-Type", header_value:= "application/json" },
-    { header_name:= "Content-Length", header_value:= "332" },
-    { header_name:= "X-CSRF-TOKEN", header_value:= ef_getCSRFToken(HttpServerHost, HttpServerPort) }
+    { header_name:= "Content-Length", header_value:= "332" }/*,
+    { header_name:= "X-CSRF-TOKEN", header_value:= ef_getCSRFToken(HttpServerHost, HttpServerPort) }*/
   };
-  var HTTPMessage v_post_request := { request := { method := "POST", uri:= "/usage_stats", version_major:= 1, version_minor:= 1, header:= v_post_headers, body:= ef_getJSONFormatPOSTRequestBody() } };
+  var HTTPMessage v_post_request := { request := { method := "POST", uri:= "/api/usage_stats", version_major:= 1, version_minor:= 1, header:= v_post_headers, body:= ef_getJSONFormatPOSTRequestBody() } };
 
   //Map to server
   map(self:client_port, system:client_port);
@@ -325,10 +325,10 @@ testcase tc_laravel_delete_last_element() runs on HTTP_client {
   var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
   var HTTPMessage v_HTTP_response;
   var HeaderLines v_delete_headers := {
-    { header_name:= "Connection", header_value:= "close" },
-    { header_name:= "X-CSRF-TOKEN", header_value:= ef_getCSRFToken(HttpServerHost, HttpServerPort) }
+    { header_name:= "Connection", header_value:= "close" }/*,
+    { header_name:= "X-CSRF-TOKEN", header_value:= ef_getCSRFToken(HttpServerHost, HttpServerPort) }*/
   };
-  var HTTPMessage v_delete_request := { request := { method := "DELETE", uri:= "/usage_stats/" & ef_getLastIDinDB() , version_major:= 1, version_minor:= 1, header:= v_delete_headers, body:= "" } };
+  var HTTPMessage v_delete_request := { request := { method := "DELETE", uri:= "/api/usage_stats/" & ef_getLastIDinDB(HttpServerHost, HttpServerPort) , version_major:= 1, version_minor:= 1, header:= v_delete_headers, body:= "" } };
 
   //Map to server
   map(self:client_port, system:client_port);
