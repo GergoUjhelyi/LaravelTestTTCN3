@@ -103,9 +103,9 @@ class UsageStatController extends Controller
     {
         $usage_stat = UsageStat::find($id);
         if ($usage_stat == null) {
-            abort(404);
+            abort(204);
         }
-        if ($usage_stat->delete()) {
+        if (!$usage_stat->delete()) {
             abort(404);
         }
         return response("Successfully deleted!",200)->header('Content-Type', 'text/plain');
