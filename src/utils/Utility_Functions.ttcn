@@ -15,6 +15,8 @@ external function ef_getCSRFToken(in charstring host, in integer portNumber) ret
 
 external function ef_getJSONFormatPOSTRequestBody() return charstring;
 
+external function ef_getLastIDinDB() return charstring;
+
 //TODO: maybe more header line needed
 const HeaderLines c_standard_header_lines := {
   { header_name:= "Connection", header_value:= "keep-alive" },
