@@ -258,6 +258,10 @@ testcase tc_laravel_get_unknown_element_by_id_json() runs on HTTP_client {
   unmap(self:client_port, system:client_port);
 }
 
+/***************************************
+** @desc Send a HTTP Post message with a new element in message body and check the response **
+** @verdict pass if the server respond a 200OK response **
+**************************************/
 testcase tc_laravel_post_element() runs on HTTP_client {
   var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
   var HTTPMessage v_HTTP_response;
@@ -317,4 +321,60 @@ testcase tc_laravel_post_element() runs on HTTP_client {
   unmap(self:client_port, system:client_port);
 }
 
+testcase tc_laravel_delete_last_element() runs on HTTP_client {
+  var Connect v_connection_message := { hostname := HttpServerHost, portnumber:= HttpServerPort, use_ssl:= HttpServerUseSSL };
+  var HTTPMessage v_HTTP_response;
+  var HeaderLines v_delete_headers := {
+    { header_name:= "Connection", header_value:= "close" },
+    { header_name:= "X-CSRF-TOKEN", header_value:= ef_getCSRFToken(HttpServerHost, HttpServerPort) }
+  };
+  var HTTPMessage v_delete_request := { request := { method := "DELETE", uri:= "/usage_stats/" & ef_getLastIDinDB() , version_major:= 1, version_minor:= 1, header:= v_delete_headers, body:= "" } };
+
+  //Map to server
+  map(self:client_port, system:client_port);
+
+  //Send HTTP connection
+  client_port.send(v_connection_message);
+
+  timer T_timer := 4.0;
+
+  //Send HTTP request
+  client_port.send( v_delete_request );
+
+  if (T_timer.running) {
+    T_timer.stop;
+  }
+  T_timer.start;
+
+  alt {
+    //Receive a HTTP message
+    [] client_port.receive(HTTPMessage:?) -> value v_HTTP_response {
+      if (match(v_HTTP_response, recv_ok_response_from_delete)) {
+        setverdict(pass, "Received HTTP OK/200 response! Received: ", v_HTTP_response);
+      } else {
+        setverdict(fail, "Received wrong response! Received: ", v_HTTP_response);
+      }
+      client_port.send(c_close_message);
+      T_timer.stop;
+    }
+    //Receive a Half_Close response
+    [] client_port.receive(any_half_close) {
+      client_port.send(c_close_message);
+      T_timer.stop;
+      setverdict(fail);
+    }
+    //Receive something else
+    [] client_port.receive {
+      client_port.send(c_close_message);
+      T_timer.stop;
+      setverdict(fail);
+    }
+    //Receive nothing until the end of the timer T_timer
+    [] T_timer.timeout {
+      setverdict(fail);
+    }
+  };
+  //Unmap from server
+  unmap(self:client_port, system:client_port);
+}
 }
