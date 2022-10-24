@@ -125,7 +125,7 @@ public class Utility__Functions_externalfunctions {
 	 */
 	public static String ef__getCSRFToken(TitanCharString httpserverhost, TitanInteger httpserverport) {
 		try {
-			URL serverURL = new URL("http://" + httpserverhost.get_value().toString() + ':' + httpserverport.get_int() + "/token");
+			URL serverURL = new URL("http://" + httpserverhost.get_value().toString() + ':' + httpserverport.get_int() + "/api/token");
 			HttpURLConnection connection = (HttpURLConnection) serverURL.openConnection();
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Content-Type", "application/json");
@@ -164,5 +164,32 @@ public class Utility__Functions_externalfunctions {
 		testJSONObject.put("os_name", "jvm os");
 		testJSONObject.put("info", "External function test 1.0");
 		return testJSONObject.toString(1);
+	}
+
+	public static String ef__getLastIDinDB(TitanCharString httpserverhost, TitanInteger httpserverport) {
+		try {
+			URL serverURL = new URL("http://" + httpserverhost.get_value().toString() + ':' + httpserverport.get_int() + "/api/last_id");
+			HttpURLConnection connection = (HttpURLConnection) serverURL.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("Content-Type", "application/json");
+			//5 seconds timeout
+			connection.setConnectTimeout(5000);
+			connection.setReadTimeout(5000);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			connection.connect();
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			StringBuffer content = new StringBuffer();
+			while ((inputLine = in.readLine()) != null) {
+				content.append(inputLine);
+			}
+			in.close();
+			connection.disconnect();
+			return content.toString();
+		} catch (IOException e) {
+			TtcnError.TtcnWarning("Error in ef__getLastIDinDB: " + e.getMessage());
+			return "";
+		}
 	}
 }
