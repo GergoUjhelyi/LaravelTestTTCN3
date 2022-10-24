@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\UsageStat;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsageStatController;
 
@@ -16,16 +17,4 @@ use App\Http\Controllers\UsageStatController;
 
 Route::get('/', function () {
     return view('welcome');
-});
-
-Route::controller(UsageStatController::class)->group(function () {
-    Route::get('/usage_stats', 'index');
-    Route::post('/usage_stats', 'store');
-    Route::get('usage_stats/{id}', 'show');
-    Route::delete('usage_stats/{id}', 'destroy');
-});
-
-Route::get('/token', function (Request $request) {
-    $token = csrf_token();
-    return $token;
 });
