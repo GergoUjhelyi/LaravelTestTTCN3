@@ -117,7 +117,7 @@ const HeaderLines c_header_accept_json := {
 const HTTPMessage c_http_get_main_page := { request:= { method:= "GET", uri:= "/", version_major:= 1, version_minor:= 1 , header:= c_header_accept_html, body:= ""}};
 
 //HTTP request to GET usage stats with accept JSON header
-const HTTPMessage c_http_get_all_usage_stats := { request:= { method:= "GET", uri:= "/usage_stats", version_major:= 1, version_minor:= 1 , header:= c_header_accept_json, body:= ""}};
+const HTTPMessage c_http_get_all_usage_stats := { request:= { method:= "GET", uri:= "/api/usage_stats", version_major:= 1, version_minor:= 1 , header:= c_header_accept_json, body:= ""}};
 
 // Generic close message
 const Close c_close_message := { client_id:= omit };
