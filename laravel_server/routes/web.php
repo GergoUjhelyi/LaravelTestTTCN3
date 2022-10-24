@@ -22,6 +22,7 @@ Route::controller(UsageStatController::class)->group(function () {
     Route::get('/usage_stats', 'index');
     Route::post('/usage_stats', 'store');
     Route::get('usage_stats/{id}', 'show');
+    Route::delete('usage_stats/{id}', 'destroy');
 });
 
 Route::get('/token', function (Request $request) {

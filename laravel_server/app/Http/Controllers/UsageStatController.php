@@ -99,8 +99,15 @@ class UsageStatController extends Controller
      * @param  \App\Models\UsageStat  $usage_Stat
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UsageStat $usage_Stat)
+    public function destroy($id)
     {
-        //
+        $usage_stat = UsageStat::find($id);
+        if ($usage_stat == null) {
+            abort(404);
+        }
+        if ($usage_stat->delete()) {
+            abort(404);
+        }
+        return response("Successfully deleted!",200)->header('Content-Type', 'text/plain');
     }
 }
