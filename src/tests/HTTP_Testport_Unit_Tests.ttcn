@@ -1,0 +1,19 @@
+module HTTP_Testport_Unit_Tests {
+
+import from HTTPmsg_PortType all;
+
+type component HTTP_client {
+  port HTTPmsg_PT client_port;
+};
+
+testcase tc_http_testport_map_unmap() runs on HTTP_client {
+  //Map to server
+  map(self:client_port, system:client_port);
+  
+  //Unmap from server
+  unmap(self:client_port, system:client_port);
+  setverdict(pass, "No error during map-unmap HTTP testport");
+}
+
+}
+

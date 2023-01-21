@@ -5,7 +5,6 @@ import from HTTPmsg_Types all;
 import from UsageStat_Type all;
 import from Utility_Functions all;
 
-
 //Default server parameters
 modulepar charstring HttpServerHost := "localhost";
 modulepar integer HttpServerPort := 8000;
