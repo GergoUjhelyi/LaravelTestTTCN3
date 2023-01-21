@@ -88,9 +88,20 @@ class UsageStatController extends Controller
      * @param  \App\Models\UsageStat  $usage_Stat
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUsage_StatRequest $request, UsageStat $usage_Stat)
+    public function update(Request $request, $id)
     {
-        //
+        $usage_stat = UsageStat::where('id', $id)->first();
+        if ($usage_stat == null) {
+            abort(204);
+        }
+        $request->flash();
+        $usage_stat->update($request->all());
+
+        if ( $usage_stat->save() ) {
+            return response()->json($usage_stat);
+        } else  {
+            abort(500);
+        }
     }
 
     /**
