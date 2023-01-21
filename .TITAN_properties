@@ -2,11 +2,11 @@
   <ActiveConfiguration>Default</ActiveConfiguration>
   <ProjectProperties>
     <MakefileSettings>
-      <targetExecutable>java_bin\LaravelTestTTCN3.jar</targetExecutable>
+      <targetExecutable>bin/LaravelTestTTCN3</targetExecutable>
     </MakefileSettings>
     <LocalBuildSettings>
       <MakefileScript/>
-      <workingDirectory>java_src</workingDirectory>
+      <workingDirectory>bin</workingDirectory>
     </LocalBuildSettings>
   </ProjectProperties>
 </TITAN_Designer_Properties>

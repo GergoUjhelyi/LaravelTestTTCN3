@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0
 Require-Bundle: org.eclipse.titan.runtime;bundle-version="1.0.0",
  org.antlr.runtime;bundle-version="4.7.1",
  org.junit,
- org.junit.jupiter.api
+ junit-jupiter-api
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.titan.LaravelTestTTCN3.generated,
