@@ -15,6 +15,23 @@ import javax.net.ssl.SSLSession;
  */
 public class SSLSocket extends Abstract_Socket {
 
+	//Parameter Constant variables instead of a function call
+	protected static final String SSL_USE_SSL_NAME = "ssl_use_ssl";
+	protected static final String SSL_USE_SESSION_RESUMPTION_NAME = "ssl_use_session_resumption";
+	protected static final String SSL_PRIVATE_KEY_FILE_NAME = "ssl_private_key_file";
+	protected static final String SSL_TRUSTEDCALIST_FILE_NAME = "ssl_trustedCAlist_file";
+	protected static final String SSL_CERTIFICATE_FILE_NAME = "ssl_certificate_chain_file";
+	protected static final String SSL_PASSWORD_NAME = "ssl_private_key_password";
+	protected static final String SSL_CIPHER_LIST_NAME = "ssl_allowed_ciphers_list";
+	protected static final String SSL_VERIFYCERTIFICATE_NAME = "ssl_verify_certificate";
+	protected static final String SSL_DISABLE_SSLV2 = "ssl_disable_SSLv2";
+	protected static final String SSL_DISABLE_SSLV3 = "ssl_disable_SSLv3";
+	protected static final String SSL_DISABLE_TLSV1 = "ssl_disable_TLSv1";
+	protected static final String SSL_DISABLE_TLSV1_1 = "ssl_disable_TLSv1_1";
+	protected static final String SSL_DISABLE_TLSV1_2 = "ssl_disable_TLSv1_2";
+	protected static final String SSL_DISABLE_TLSV1_3 = "ssl_disable_TLSv1_3";
+	// TODO: add Java specific parameter name
+
 	private boolean ssl_verify_certificate;     // verify other part's certificate or not
 	private boolean ssl_use_ssl;                // whether to use SSL
 	private boolean ssl_initialized;            // whether SSL already initialized or not
@@ -80,9 +97,95 @@ public class SSLSocket extends Abstract_Socket {
 		TLSv1_2 = true;
 		TLSv1_3 = true;  
 	}
-	
+
 	protected boolean parameter_set(final String parameter_name, final String parameter_value) {
-		return false;
+		if (parameter_name == null || parameter_value == null) {
+			log_error("Parameter name and parameter value should not be null");
+		}
+		log_debug("entering SSL_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
+
+		if (parameter_name.equals(SSL_USE_SSL_NAME)) {
+			if (parameter_value.toLowerCase().equals("yes")) {
+				ssl_use_ssl = true;
+			} else if (parameter_value.toLowerCase().equals("no")) {
+				ssl_use_ssl = false;
+			} else {
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SSL_USE_SSL_NAME);
+			}
+		} else if (parameter_name.equals(SSL_USE_SESSION_RESUMPTION_NAME)) {
+			if (parameter_value.toLowerCase().equals("yes")) {
+				ssl_use_session_resumption = true;
+			} else if (parameter_value.toLowerCase().equals("no")) {
+				ssl_use_session_resumption = false;
+			} else {
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SSL_USE_SESSION_RESUMPTION_NAME);
+			}
+		} else if (parameter_name.equals(SSL_PRIVATE_KEY_FILE_NAME)) {
+			ssl_key_file = parameter_value;
+		} else if (parameter_name.equals(SSL_TRUSTEDCALIST_FILE_NAME)) {
+			ssl_trustedCAlist_file = parameter_value;
+		} else if (parameter_name.equals(SSL_CERTIFICATE_FILE_NAME)) {
+			ssl_certificate_file = parameter_value;
+		} else if (parameter_name.equals(SSL_CIPHER_LIST_NAME)) {
+			ssl_cipher_list = parameter_value;
+		} else if (parameter_name.equals(SSL_PASSWORD_NAME)) {
+			ssl_password = parameter_value;
+		} else if (parameter_name.equals(SSL_VERIFYCERTIFICATE_NAME)) {
+			if (parameter_value.toLowerCase().equals("yes")) {
+				ssl_verify_certificate = true;
+			} else if (parameter_value.toLowerCase().equals("no")) {
+				ssl_verify_certificate = false;
+			} else {
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SSL_VERIFYCERTIFICATE_NAME);
+			}
+		} else if (parameter_name.equals(SSL_DISABLE_SSLV2)) {
+			log_warning("SSLv2 is not supported by Java - parameter value : %s is not used!", parameter_value);
+		} else if (parameter_name.equals(SSL_DISABLE_SSLV3)) {
+			if (parameter_value.toLowerCase().equals("yes")) {
+				SSLv3 = false;
+			} else if (parameter_value.toLowerCase().equals("no")) {
+				SSLv3 = true;
+			} else {
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SSL_DISABLE_SSLV3);
+			}
+		} else if (parameter_name.equals(SSL_DISABLE_TLSV1)) {
+			if (parameter_value.toLowerCase().equals("yes")) {
+				TLSv1 = false;
+			} else if (parameter_value.toLowerCase().equals("no")) {
+				TLSv1 = true;
+			} else {
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SSL_DISABLE_TLSV1);
+			}
+		} else if (parameter_name.equals(SSL_DISABLE_TLSV1_1)) {
+			if (parameter_value.toLowerCase().equals("yes")) {
+				TLSv1_1 = false;
+			} else if (parameter_value.toLowerCase().equals("no")) {
+				TLSv1_1 = true;
+			} else {
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SSL_DISABLE_TLSV1_1);
+			}
+		} else if (parameter_name.equals(SSL_DISABLE_TLSV1_2)) {
+			if (parameter_value.toLowerCase().equals("yes")) {
+				TLSv1_2 = false;
+			} else if (parameter_value.toLowerCase().equals("no")) {
+				TLSv1_2 = true;
+			} else {
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SSL_DISABLE_TLSV1_2);
+			}
+		} else if (parameter_name.equals(SSL_DISABLE_TLSV1_3)) {
+			if (parameter_value.toLowerCase().equals("yes")) {
+				TLSv1_3 = false;
+			} else if (parameter_value.toLowerCase().equals("no")) {
+				TLSv1_3 = true;
+			} else {
+				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SSL_DISABLE_TLSV1_3);
+			}
+		} else {
+			log_debug("leaving SSL_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
+			return super.parameter_set(parameter_name, parameter_value);
+		}
+		log_debug("leaving SSL_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
+		return true;
 	}
 
 	@Override
@@ -138,7 +241,7 @@ public class SSLSocket extends Abstract_Socket {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	private String[] getProtocolsString() {
 		List<String> protocols = new ArrayList<>();
 		if (SSLv3) {
