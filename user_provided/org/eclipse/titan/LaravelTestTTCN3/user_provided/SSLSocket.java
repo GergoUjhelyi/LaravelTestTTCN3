@@ -1,6 +1,9 @@
 package org.eclipse.titan.LaravelTestTTCN3.user_provided;
 
+import java.io.File;
+import java.nio.ByteBuffer;
 import java.nio.channels.SelectableChannel;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +34,16 @@ public class SSLSocket extends Abstract_Socket {
 	protected static final String SSL_DISABLE_TLSV1_2 = "ssl_disable_TLSv1_2";
 	protected static final String SSL_DISABLE_TLSV1_3 = "ssl_disable_TLSv1_3";
 	// TODO: add Java specific parameter name
+	protected static final String JAVA_KEYSTORE_PASSWORD_NAME = "java_keystore_password";
+	protected static final String JAVA_KEYSTORE_TYPE_NAME = "java_keystore_type";
+	protected static final String JAVA_KEYSTORE_ALGORITHM_NAME = "java_keystore_algorithm";
+	protected static final String JAVA_TRUSTSTORE_PASSWORD_NAME = "java_truststore_password";
+	protected static final String JAVA_TRUSTSTORE_TYPE_NAME = "java_truststore_type";
+	protected static final String JAVA_TRUSTSTORE_ALGORITHM_NAME = "java_truststore_algorithm";
+	protected static final String JAVA_CERT_LOCATION_NAME = "java_cert_files_location";
+
+	private static final String KEYSTORE_DEFAULT_PASSWORD = "password";
+	private static final String DEFAULT_CERT_FILES_LOCATION = System.getProperty("user.dir") + File.separator + "resources" + File.separator;
 
 	private boolean ssl_verify_certificate;     // verify other part's certificate or not
 	private boolean ssl_use_ssl;                // whether to use SSL
@@ -54,6 +67,34 @@ public class SSLSocket extends Abstract_Socket {
 	private SSLContext ssl_ctx;
 	private SSLEngine ssl_engine;
 
+	private String cert_location;
+	private String keystore_password;
+	/**
+	 * Possible Java KeyStore types, for more details check the testport documentation. 
+	 * KeyStore types: 
+	 * 	- JKS
+	 *  - JCEKS
+	 *  - PKCS12
+	 *  - PKCS11
+	 *  - DKS
+	 *  - Windows-MY
+	 *  - BKS
+	 */
+	private String keystore_type;
+	private String keystore_algorithm;
+
+	private String truststore_password;
+	private String truststore_type;
+	private String truststore_algorithm;
+
+	private KeyStore ks_keys; // KeyStore
+	private KeyStore ts_keys; // TrustStore
+	
+	private ByteBuffer my_app_data;
+    private ByteBuffer my_net_data;
+    private ByteBuffer peer_app_data;
+    private ByteBuffer peer_net_data;
+
 	public SSLSocket() {
 		ssl_use_ssl = false;
 		ssl_initialized = false;
@@ -73,7 +114,7 @@ public class SSLSocket extends Abstract_Socket {
 		TLSv1 = true;
 		TLSv1_1 = true;
 		TLSv1_2 = true;
-		TLSv1_3 = true; 
+		TLSv1_3 = true;
 	}
 
 	public SSLSocket(final String tp_type, final String tp_name) {
@@ -95,7 +136,8 @@ public class SSLSocket extends Abstract_Socket {
 		TLSv1 = true;
 		TLSv1_1 = true;
 		TLSv1_2 = true;
-		TLSv1_3 = true;  
+		TLSv1_3 = true;
+		//Java specific
 	}
 
 	protected boolean parameter_set(final String parameter_name, final String parameter_value) {
@@ -180,6 +222,20 @@ public class SSLSocket extends Abstract_Socket {
 			} else {
 				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SSL_DISABLE_TLSV1_3);
 			}
+		} else if (parameter_name.equals(JAVA_KEYSTORE_PASSWORD_NAME)) {
+			keystore_password = parameter_value;
+		} else if (parameter_name.equals(JAVA_KEYSTORE_TYPE_NAME)) {
+			keystore_type = parameter_value;
+		} else if (parameter_name.equals(JAVA_TRUSTSTORE_ALGORITHM_NAME)) {
+			keystore_algorithm = parameter_value;
+		} else if (parameter_name.equals(JAVA_TRUSTSTORE_PASSWORD_NAME)) {
+			truststore_password = parameter_value;
+		} else if (parameter_name.equals(JAVA_TRUSTSTORE_TYPE_NAME)) {
+			truststore_type = parameter_value;
+		} else if (parameter_name.equals(JAVA_TRUSTSTORE_ALGORITHM_NAME)) {
+			truststore_algorithm = parameter_value;
+		} else if (parameter_name.equals(JAVA_CERT_LOCATION_NAME)) {
+			cert_location = parameter_value;
 		} else {
 			log_debug("leaving SSL_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
 			return super.parameter_set(parameter_name, parameter_value);
