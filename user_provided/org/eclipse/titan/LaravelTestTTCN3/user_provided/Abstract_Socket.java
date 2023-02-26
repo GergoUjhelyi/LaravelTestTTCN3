@@ -232,114 +232,126 @@ public abstract class Abstract_Socket {
 	protected boolean parameter_set(final String parameter_name, final String parameter_value) {
 		log_debug("entering Abstract_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
 
-		if (parameter_name.equals(SOCKET_DEBUGGING_NAME)) {
-			if (parameter_value.equalsIgnoreCase("yes")) {
-				socket_debugging = true;
-			} else if (parameter_value.equalsIgnoreCase("no")) {
-				socket_debugging = false;
-			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SOCKET_DEBUGGING_NAME);
-			}
-		} else if (parameter_name.equals(SERVER_MODE_NAME)) {
-			if (parameter_value.equalsIgnoreCase("yes")) {
-				server_mode = true;
-			} else if (parameter_value.equalsIgnoreCase("no")) {
-				server_mode = false;
-			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SERVER_MODE_NAME);
-			}
-		} else if (parameter_name.equals(USE_CONNECTION_ASPS_NAME)) {
-			if (parameter_value.equalsIgnoreCase("yes")) {
-				use_connection_ASPs = true;
-			} else if (parameter_value.equalsIgnoreCase("no")) {
-				use_connection_ASPs = false;
-			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, USE_CONNECTION_ASPS_NAME);
-			}
-		} else if (parameter_name.equals(HALT_ON_CONNECTION_RESET_NAME)) {
-			halt_on_connection_reset_set = true;
-			if (parameter_value.equalsIgnoreCase("yes")) {
-				halt_on_connection_reset = true;
-			} else if (parameter_value.equalsIgnoreCase("no")) {
-				halt_on_connection_reset = false;
-			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, HALT_ON_CONNECTION_RESET_NAME);
-			}
-		} else if (parameter_name.equals(CLIENT_TCP_RECONNECT_NAME)) {
-			if (parameter_value.equalsIgnoreCase("yes")) {
-				client_TCP_reconnect = true;
-			} else if (parameter_value.equalsIgnoreCase("no")) {
-				client_TCP_reconnect = false;
-			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, CLIENT_TCP_RECONNECT_NAME);
-			}
-		} else if (parameter_name.equals(TCP_RECONNECT_ATTEMPTS_NAME)) {
-			try {
-				TCP_reconnect_attempts = Integer.valueOf(parameter_value);
-			} catch (NumberFormatException e) {
-				log_error("Invalid input as TCP_reconnect_attempts counter given: %s", parameter_value);
-			}
-			if (TCP_reconnect_attempts <= 0) {
-				log_error("TCP_reconnect_attempts must be greater than 0, %d is given", TCP_reconnect_attempts);
-			}
-		} else if (parameter_name.equals(TCP_RECONNECT_DELAY_NAME)) {
-			try {
-				TCP_reconnect_delay = Integer.valueOf(parameter_value);
-			} catch (NumberFormatException e) {
-				log_error("Invalid input as TCP_reconnect_delay given: %s", parameter_value);
-			}
-			if (TCP_reconnect_delay < 0) {
-				log_error("TCP_reconnect_delay must not be less than 0, %d is given", TCP_reconnect_delay);
-			}
-		} else if (parameter_name.equals(REMOTE_ADDRESS_NAME)) {
-			remote_host_name = parameter_value;
-		} else if (parameter_name.equals(LOCAL_ADDRESS_NAME)) {
-			local_host_name = parameter_value;
-		} else if (parameter_name.equals(REMOTE_PORT_NAME)) {
-			try {
-				int a = Integer.valueOf(parameter_value);
-				if (a > 65535 || a < 0) {
-					log_error("Port number must be between 0 and 65535, %d is given", a);
+		switch (parameter_name) {
+			case SOCKET_DEBUGGING_NAME -> {
+				if (parameter_value.equalsIgnoreCase("yes")) {
+					socket_debugging = true;
+				} else if (parameter_value.equalsIgnoreCase("no")) {
+					socket_debugging = false;
 				} else {
-					remote_port_number = a;
+					log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SOCKET_DEBUGGING_NAME);
 				}
-			} catch (NumberFormatException e) {
-				log_error("Invalid input as port number given: %s", parameter_value);
 			}
-		} else if (parameter_name.equals(LOCAL_PORT_NAME)) {
-			try {
-				int a = Integer.valueOf(parameter_value);
-				if (a > 65535 || a < 0) {
-					log_error("Port number must be between 0 and 65535, %d is given", a);
+			case SERVER_MODE_NAME -> {
+				if (parameter_value.equalsIgnoreCase("yes")) {
+					server_mode = true;
+				} else if (parameter_value.equalsIgnoreCase("no")) {
+					server_mode = false;
 				} else {
-					local_port_number = a;
+					log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, SERVER_MODE_NAME);
 				}
-			} catch (NumberFormatException e) {
-				log_error("Invalid input as port number given: %s", parameter_value);
 			}
-		} else if (parameter_name.equals(NAGLING_NAME)) {
-			if (parameter_value.equalsIgnoreCase("yes")) {
-				nagling = true;
-			} else if (parameter_value.equalsIgnoreCase("no")) {
-				nagling = false;
-			} else {
-				log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, NAGLING_NAME);
+			case USE_CONNECTION_ASPS_NAME -> {
+				if (parameter_value.equalsIgnoreCase("yes")) {
+					use_connection_ASPs = true;
+				} else if (parameter_value.equalsIgnoreCase("no")) {
+					use_connection_ASPs = false;
+				} else {
+					log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, USE_CONNECTION_ASPS_NAME);
+				}
 			}
-		} else if (parameter_name.equals(USE_NON_BLOCKING_SOCKET_NAME)) {
-			if (parameter_value.equalsIgnoreCase("yes")) {
-				use_non_blocking_socket = true;
-			} else if (parameter_value.equalsIgnoreCase("no")) {
-				use_non_blocking_socket = false;
+			case HALT_ON_CONNECTION_RESET_NAME -> {
+				halt_on_connection_reset_set = true;
+				if (parameter_value.equalsIgnoreCase("yes")) {
+					halt_on_connection_reset = true;
+				} else if (parameter_value.equalsIgnoreCase("no")) {
+					halt_on_connection_reset = false;
+				} else {
+					log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, HALT_ON_CONNECTION_RESET_NAME);
+				}
 			}
-		} else if (parameter_name.equals(SERVER_BACKLOG_NAME)) {
-			try {
-				server_backlog = Integer.valueOf(parameter_value);
-			} catch (NumberFormatException e) {
-				log_error("Invalid input as server backlog given: %s", parameter_value);
+			case CLIENT_TCP_RECONNECT_NAME -> {
+				if (parameter_value.equalsIgnoreCase("yes")) {
+					client_TCP_reconnect = true;
+				} else if (parameter_value.equalsIgnoreCase("no")) {
+					client_TCP_reconnect = false;
+				} else {
+					log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, CLIENT_TCP_RECONNECT_NAME);
+				}
 			}
-		} else {
-			log_debug("leaving Abstract_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
-			return false;
+			case TCP_RECONNECT_ATTEMPTS_NAME -> {
+				try {
+					TCP_reconnect_attempts = Integer.parseInt(parameter_value);
+				} catch (NumberFormatException e) {
+					log_error("Invalid input as TCP_reconnect_attempts counter given: %s", parameter_value);
+				}
+				if (TCP_reconnect_attempts <= 0) {
+					log_error("TCP_reconnect_attempts must be greater than 0, %d is given", TCP_reconnect_attempts);
+				}
+			}
+			case TCP_RECONNECT_DELAY_NAME -> {
+				try {
+					TCP_reconnect_delay = Integer.parseInt(parameter_value);
+				} catch (NumberFormatException e) {
+					log_error("Invalid input as TCP_reconnect_delay given: %s", parameter_value);
+				}
+				if (TCP_reconnect_delay < 0) {
+					log_error("TCP_reconnect_delay must not be less than 0, %d is given", TCP_reconnect_delay);
+				}
+			}
+			case REMOTE_ADDRESS_NAME -> remote_host_name = parameter_value;
+			case LOCAL_ADDRESS_NAME -> local_host_name = parameter_value;
+			case REMOTE_PORT_NAME -> {
+				try {
+					int a = Integer.parseInt(parameter_value);
+					if (a > 65535 || a < 0) {
+						log_error("Port number must be between 0 and 65535, %d is given", a);
+					} else {
+						remote_port_number = a;
+					}
+				} catch (NumberFormatException e) {
+					log_error("Invalid input as port number given: %s", parameter_value);
+				}
+			}
+			case LOCAL_PORT_NAME -> {
+				try {
+					int a = Integer.parseInt(parameter_value);
+					if (a > 65535 || a < 0) {
+						log_error("Port number must be between 0 and 65535, %d is given", a);
+					} else {
+						local_port_number = a;
+					}
+				} catch (NumberFormatException e) {
+					log_error("Invalid input as port number given: %s", parameter_value);
+				}
+			}
+			case NAGLING_NAME -> {
+				if (parameter_value.equalsIgnoreCase("yes")) {
+					nagling = true;
+				} else if (parameter_value.equalsIgnoreCase("no")) {
+					nagling = false;
+				} else {
+					log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, NAGLING_NAME);
+				}
+			}
+			case USE_NON_BLOCKING_SOCKET_NAME -> {
+				if (parameter_value.equalsIgnoreCase("yes")) {
+					use_non_blocking_socket = true;
+				} else if (parameter_value.equalsIgnoreCase("no")) {
+					use_non_blocking_socket = false;
+				}
+			}
+			case SERVER_BACKLOG_NAME -> {
+				try {
+					server_backlog = Integer.parseInt(parameter_value);
+				} catch (NumberFormatException e) {
+					log_error("Invalid input as server backlog given: %s", parameter_value);
+				}
+			}
+			default -> {
+				log_debug("leaving Abstract_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
+				return false;
+			}
 		}
 		log_debug("leaving Abstract_Socket.parameter_set(%s, %s)", parameter_name, parameter_value);
 		return true;
@@ -347,7 +359,7 @@ public abstract class Abstract_Socket {
 
 	/**
 	 * Handle function for socket events coming from the Channel's selector.
-	 * 
+	 * <p>
 	 * Shall be called from <code>Handle_Event</code> function.
 	 * 
 	 * @param fd the SelectableChannel what has event in the queue.
@@ -364,23 +376,23 @@ public abstract class Abstract_Socket {
 				as_client_struct client_data = get_peer(fd, false);
 				log_debug("Abstract_Socket.Handle_Socket_Event(). Client %s closed connection.", fd.toString());
 				switch (client_data.reading_state) {
-				case STATE_BLOCK_FOR_SENDING:
-					log_debug("Abstract_Socket.Handle_Socket_Event(): state is STATE_BLOCK_FOR_SENDING, don't close connection.");
-					Remove_Fd_Read_Handler(fd);
-					client_data.reading_state = READING_STATES.STATE_DONT_CLOSE;
-					log_debug("Abstract_Socket.Handle_Socket_Event(): setting socket state to STATE_DONT_CLOSE");
-					break;
-				case STATE_DONT_CLOSE:
-					log_debug("Abstract_Socket.Handle_Socket_Event(): state is STATE_DONT_CLOSE, don't close connection.");
-					break;
-				default:
-					if((client_data.tcp_state == TCP_STATES.CLOSE_WAIT) || (client_data.tcp_state == TCP_STATES.FIN_WAIT)) {
-						remove_client(fd);
-						peer_disconnected(fd);
-					} else {
-						client_data.tcp_state = TCP_STATES.CLOSE_WAIT;
+					case STATE_BLOCK_FOR_SENDING -> {
+						log_debug("Abstract_Socket.Handle_Socket_Event(): state is STATE_BLOCK_FOR_SENDING, don't close connection.");
 						Remove_Fd_Read_Handler(fd);
-						peer_half_closed(fd);
+						client_data.reading_state = READING_STATES.STATE_DONT_CLOSE;
+						log_debug("Abstract_Socket.Handle_Socket_Event(): setting socket state to STATE_DONT_CLOSE");
+					}
+					case STATE_DONT_CLOSE ->
+							log_debug("Abstract_Socket.Handle_Socket_Event(): state is STATE_DONT_CLOSE, don't close connection.");
+					default -> {
+						if ((client_data.tcp_state == TCP_STATES.CLOSE_WAIT) || (client_data.tcp_state == TCP_STATES.FIN_WAIT)) {
+							remove_client(fd);
+							peer_disconnected(fd);
+						} else {
+							client_data.tcp_state = TCP_STATES.CLOSE_WAIT;
+							Remove_Fd_Read_Handler(fd);
+							peer_half_closed(fd);
+						}
 					}
 				}
 			} else if (messageLength > 0) {
@@ -465,7 +477,7 @@ public abstract class Abstract_Socket {
 
 		buf.rewind();
 		recv_tb.rewind();
-		byte received[] = new byte[messageLength];
+		byte[] received = new byte[messageLength];
 		buf.get(received, 0, messageLength);
 		recv_tb.put_s(received);
 
@@ -501,7 +513,7 @@ public abstract class Abstract_Socket {
 
 	/**
 	 * Called after a peer is connected.
-	 * 
+	 * <p>
 	 * Do nothing in here. Override in your test port implementation.
 	 * 
 	 * @param client_id - int
@@ -562,11 +574,7 @@ public abstract class Abstract_Socket {
 			// If halt_on_connection_reset is not set explicitly
 			// set it to the default value: true on clients, false on servers
 			if (!halt_on_connection_reset_set) {
-				if (local_port_number != 0) {
-					halt_on_connection_reset = false;
-				} else {
-					halt_on_connection_reset = true;
-				}
+				halt_on_connection_reset = local_port_number == 0;
 			}
 		}
 
@@ -611,7 +619,7 @@ public abstract class Abstract_Socket {
 				log_warning("InetAddress.getAllByName : %s", e.getMessage());
 				return -1;
 			}
-		} else if (localHostname != null && localServicename != null) {
+		} else if (localHostname != null) {
 			try {
 				new_local_addrs = InetAddress.getAllByName(localHostname);
 			} catch (UnknownHostException e) {
@@ -672,22 +680,11 @@ public abstract class Abstract_Socket {
 			log_debug("Bind to port...");
 			try {
 				if (localServicename != null) {
-					listen_fd.bind(new InetSocketAddress(new_local_addrs[i], Integer.valueOf(localServicename)), server_backlog);
+					listen_fd.bind(new InetSocketAddress(new_local_addrs[i], Integer.parseInt(localServicename)), server_backlog);
 				} else {
 					listen_fd.bind(new InetSocketAddress(new_local_addrs[i], 0), server_backlog);
 				}
-			} catch (NumberFormatException e) {
-				try {
-					listen_fd.close();
-				} catch (IOException e1) {
-					log_debug("Cannot bind to port when trying to open the listen port: %s", e1.getMessage());
-					listen_fd = null;
-					continue;
-				}
-				log_debug("Cannot bind to port when trying to open the listen port: %s", e.getMessage());
-				listen_fd = null;
-				continue;
-			} catch (IOException e) {
+			} catch (NumberFormatException | IOException e) {
 				try {
 					listen_fd.close();
 				} catch (IOException e1) {
@@ -753,7 +750,7 @@ public abstract class Abstract_Socket {
 	/**
 	 * Abstract method to notify user after a server/listening socket opened.
 	 * 
-	 * @param port_number where to listening socket binded
+	 * @param port_number where to listen socket binded
 	 */
 	protected abstract void listen_port_opened(int port_number);
 
@@ -802,23 +799,21 @@ public abstract class Abstract_Socket {
 	protected int open_client_connection(final String remoteHostname, final String remoteService, final String localHostname, final String localService) {
 		log_debug("Abstract_Socket.open_client_connection(remoteAddr: %s/%s, localAddr: %s/%s) called", remoteHostname, remoteService, (localHostname != null) ? localHostname : "UNSPEC", (localService != null) ? localService : "UNSPEC");
 
-		InetSocketAddress new_remote_addr = new InetSocketAddress(remoteHostname, Integer.valueOf(remoteService));
+		InetSocketAddress new_remote_addr = new InetSocketAddress(remoteHostname, Integer.parseInt(remoteService));
 		InetSocketAddress new_local_addr = null;
 
 		log_debug("Remote address: %s:%d", new_remote_addr.getAddress(), new_remote_addr.getPort());
 
 		//Check every possibility to get a valid local address.
 		if (localHostname != null && localService != null) {
-			new_local_addr = new InetSocketAddress(localHostname, Integer.valueOf(localService));
+			new_local_addr = new InetSocketAddress(localHostname, Integer.parseInt(localService));
 		} else if (localHostname == null && localService != null) {
 			try {
-				new_local_addr = new InetSocketAddress(InetAddress.getLocalHost(), Integer.valueOf(localService));
-			} catch (NumberFormatException e) {
-				log_error("%s", e.getMessage());
-			} catch (UnknownHostException e) {
+				new_local_addr = new InetSocketAddress(InetAddress.getLocalHost(), Integer.parseInt(localService));
+			} catch (NumberFormatException | UnknownHostException e) {
 				log_error("%s", e.getMessage());
 			}
-		} else if (localHostname != null && localService == null) {
+		} else if (localHostname != null) {
 			new_local_addr = new InetSocketAddress(localHostname, 0);
 		} else if (localHostname == null && localService == null) {
 			new_local_addr = new InetSocketAddress(0);
@@ -899,15 +894,7 @@ public abstract class Abstract_Socket {
 					}
 				}
 			}
-		} catch (IOException e) {
-			if(use_connection_ASPs) {
-				log_warning("Cannot connect to server when trying to open client connection: %s", e.getMessage());
-				client_connection_opened(-1);
-				return -1;
-			} else {
-				log_error("Cannot connect to server");
-			}
-		} catch (UnresolvedAddressException e) {
+		} catch (IOException | UnresolvedAddressException e) {
 			if(use_connection_ASPs) {
 				log_warning("Cannot connect to server when trying to open client connection: %s", e.getMessage());
 				client_connection_opened(-1);
@@ -974,7 +961,7 @@ public abstract class Abstract_Socket {
 
 	/**
 	 * Called after a peer is disconnected.
-	 * 
+	 * <p>
 	 * peer_disconnected() needs to be overridden in test ports!
 	 */
 	protected void peer_disconnected(SelectableChannel fd) {
@@ -1047,8 +1034,7 @@ public abstract class Abstract_Socket {
 		SocketChannel dest_socket_channel = null;
 		int nrOfBytesSent = 0;
 
-		int dest_fd = client_id;
-		if (dest_fd == -1) {
+		if (client_id == -1) {
 			if (peer_list_get_nr_of_peers() > 1) {
 				log_error("Client Id not specified altough not only 1 client exists");
 			} else if (peer_list_get_nr_of_peers() == 0) {
@@ -1058,7 +1044,7 @@ public abstract class Abstract_Socket {
 		}
 		as_client_struct client_data = dest_socket_channel != null ? get_peer(dest_socket_channel, true) : get_peer(client_id, true);
 		dest_socket_channel = client_data.tcp_socket;
-		if (client_data == null || ((client_data.tcp_state != TCP_STATES.ESTABLISHED) && (client_data.tcp_state != TCP_STATES.CLOSE_WAIT))) {
+		if (client_data.tcp_state != TCP_STATES.ESTABLISHED && client_data.tcp_state != TCP_STATES.CLOSE_WAIT) {
 			String error_text = String.format("client nr %d has no established connection", client_id);
 			System.err.println(error_text);
 			log_debug("leaving Abstract_Socket.send_outgoing()");
@@ -1067,7 +1053,7 @@ public abstract class Abstract_Socket {
 		nrOfBytesSent = send_message_on_fd(dest_socket_channel, message_buffer);
 		if (nrOfBytesSent == -1) {
 			log_debug("Client %d closed connection.", client_id);
-			report_unsent(dest_fd, length, nrOfBytesSent, message_buffer, "Client closed the connection");
+			report_unsent(client_id, length, nrOfBytesSent, message_buffer, "Client closed the connection");
 
 			if (client_data.tcp_state == TCP_STATES.CLOSE_WAIT) {
 				log_debug("Client %d waiting for close ASP.", client_id);
@@ -1355,7 +1341,7 @@ public abstract class Abstract_Socket {
 	/**
 	 * Returns back the object of the connection.
 	 * 
-	 * @param client_fd the channel what we looking for
+	 * @param client_fd the channel what we're looking for
 	 * @param no_error not throw error if client doesn't find in the connection list 
 	 * @return the connection object what has the SelectableChannel
 	 */

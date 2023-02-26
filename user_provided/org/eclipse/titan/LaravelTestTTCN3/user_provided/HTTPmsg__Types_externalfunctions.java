@@ -18,18 +18,18 @@ public class HTTPmsg__Types_externalfunctions {
 
 	/*********************************************************
 	 * Function: enc__HTTPMessage
-	 *
+	 * <p>
 	 * Purpose:
 	 *    To encode msg type of HTTPMessage into OCTETSTRING separated from sending functionality
 	 *    It is for users using this test port as a protocol module
-	 *
+	 * <p>
 	 * References:
 	 *   RFC2616
-	 *
+	 * <p>
 	 * Precondition:
 	 *  msg is filled in properly
 	 * Postcondition:
-	 *
+	 * <p>
 	 * Detailed Comments:
 	 * -
 	 *
@@ -46,19 +46,19 @@ public class HTTPmsg__Types_externalfunctions {
 	}
 	/*********************************************************
 	 * Function: dec__HTTPMessage
-	 *
+	 * <p>
 	 * Purpose:
 	 *    To decode msg type of OCTETSTRING into HTTPMessage separated from receiving functionality
 	 *    It is for users using this test port as a protocol module
-	 *
+	 * <p>
 	 * References:
 	 *   RFC2616
-	 *
+	 * <p>
 	 * Precondition:
 	 *  stream is filled in properly
 	 * Postcondition:
 	 *  -
-	 *  
+	 * <p>
 	 * Detailed Comments:
 	 * 	If the full stream is decoded, the return value is zero
 	 * 	If nothing is decoded (decoding failed) the return value equals to the original length of the stream
