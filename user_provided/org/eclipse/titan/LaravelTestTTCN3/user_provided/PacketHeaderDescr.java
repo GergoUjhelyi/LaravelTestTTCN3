@@ -11,7 +11,7 @@ package org.eclipse.titan.LaravelTestTTCN3.user_provided;
  **  PacketHeaderDescr
  **  used for fragmentation and concatenation
  **  of fixed format messages
- *********************************
+ * <p>
  *
  * @author Gergo Ujhelyi
  */
@@ -20,11 +20,11 @@ public class PacketHeaderDescr {
 	// Byte order in the header
 	public enum HeaderByteOrder{ Header_MSB, Header_LSB };
 
-	private long length_offset;
-	private long nr_bytes_in_length;
-	private HeaderByteOrder byte_order;
-	private long value_offset;
-	private long length_multiplier;
+	private final long length_offset;
+	private final long nr_bytes_in_length;
+	private final HeaderByteOrder byte_order;
+	private final long value_offset;
+	private final long length_multiplier;
 
 	public PacketHeaderDescr(long length_offset, long nr_bytes_in_length, HeaderByteOrder byte_order, long value_offset, long length_multiplier) {
 		this.length_offset = length_offset;
@@ -49,7 +49,7 @@ public class PacketHeaderDescr {
 		long m_length = 0;
 		for (int i = 0; i < nr_bytes_in_length; i++) {
 			long shift_count = byte_order == HeaderByteOrder.Header_MSB ? nr_bytes_in_length - 1 - i : i;
-			m_length |= buffer_pointer[(int) (length_offset + i)] << (8 * shift_count);
+			m_length |= (long) buffer_pointer[(int) (length_offset + i)] << (8 * shift_count);
 		}
 		m_length *= length_multiplier;
 		if (value_offset < 0 && (long)m_length < -value_offset) {
