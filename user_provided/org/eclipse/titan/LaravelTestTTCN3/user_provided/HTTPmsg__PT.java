@@ -48,6 +48,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	public static final String SERVER_BACKLOG_NAME = "server_backlog";
 	public static final String USE_NOTIFICATION_ASPS_NAME = "use_notification_ASPs";
 	public static final String SOCKET_DEBUGGING_NAME = "http_debugging";
+	public static final String SSL_USE_SSL_NAME = "AS_USE_SSL";
 
 	private boolean adding_ssl_connection;
 	private boolean adding_client_connection;
@@ -65,6 +66,8 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	private static final int BUFFER_CRLF = 3;
 
 	private static boolean report_lf = true;
+
+	private boolean ssl_use_ssl = false;
 
 	/**
 	 * Default constructor: create an Abstract_socket and set up default values
@@ -517,6 +520,13 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 */
 	@Override
 	public void set_parameter(String parameter_name, String parameter_value) {
+		if (parameter_name.equalsIgnoreCase(SSL_USE_SSL_NAME)) {
+			if (parameter_value.equalsIgnoreCase("yes")) {
+				// Create SSL_Socket object
+				ssl_use_ssl = true;
+				create_ssl_socket();
+			}
+		}
 		abstract_Socket.log_debug("entering HTTPmsg__PT.set_parameter(%s, %s)", parameter_name, parameter_value);
 		if (parameter_name.equalsIgnoreCase(USE_NOTIFICATION_ASPS_NAME)) {
 			if (parameter_value.equalsIgnoreCase("yes")) {
@@ -537,13 +547,23 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 */
 	@Override
 	protected void user_map(String system_port) {
-		abstract_Socket.log_debug("entering HTTPmsg__PT.user_map(%s)", system_port);
-		if (TTCN_Logger.log_this_event(Severity.DEBUG_TESTPORT)) {
-			if(!abstract_Socket.get_socket_debugging())
-				abstract_Socket.log_warning("%s: to switch on HTTP test port debugging, set the '*.%s.http_debugging := \"yes\" in the port's parameters.", this.get_name(), this.get_name());
+		if (ssl_use_ssl) {
+			ssl_socket.log_debug("entering HTTPmsg__PT.user_map(%s)", system_port);
+			if (TTCN_Logger.log_this_event(Severity.DEBUG_TESTPORT)) {
+				if(!ssl_socket.get_socket_debugging())
+					ssl_socket.log_warning("%s: to switch on HTTP test port debugging, set the '*.%s.http_debugging := \"yes\" in the port's parameters.", this.get_name(), this.get_name());
+			}
+			ssl_socket.map_user();
+			ssl_socket.log_debug("leaving HTTPmsg__PT.user_map()");
+		} else {
+			abstract_Socket.log_debug("entering HTTPmsg__PT.user_map(%s)", system_port);
+			if (TTCN_Logger.log_this_event(Severity.DEBUG_TESTPORT)) {
+				if(!abstract_Socket.get_socket_debugging())
+					abstract_Socket.log_warning("%s: to switch on HTTP test port debugging, set the '*.%s.http_debugging := \"yes\" in the port's parameters.", this.get_name(), this.get_name());
+			}
+			abstract_Socket.map_user();
+			abstract_Socket.log_debug("leaving HTTPmsg__PT.user_map()");
 		}
-		abstract_Socket.map_user();
-		abstract_Socket.log_debug("leaving HTTPmsg__PT.user_map()");
 	}
 
 	/**
@@ -673,32 +693,32 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		int client_id = -1;
 
 		switch (send_par.get_selection()) {
-			case ALT_request -> {
-				if (send_par.constGet_field_request().constGet_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_request().constGet_field_client__id().get().get_int();
-				}
+		case ALT_request -> {
+			if (send_par.constGet_field_request().constGet_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_request().constGet_field_client__id().get().get_int();
 			}
-			case ALT_request__binary -> {
-				if (send_par.constGet_field_request__binary().constGet_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_request__binary().constGet_field_client__id().get().get_int();
-				}
+		}
+		case ALT_request__binary -> {
+			if (send_par.constGet_field_request__binary().constGet_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_request__binary().constGet_field_client__id().get().get_int();
 			}
-			case ALT_response -> {
-				if (send_par.constGet_field_response().constGet_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_response().constGet_field_client__id().get().get_int();
-				}
+		}
+		case ALT_response -> {
+			if (send_par.constGet_field_response().constGet_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_response().constGet_field_client__id().get().get_int();
 			}
-			case ALT_response__binary -> {
-				if (send_par.constGet_field_response__binary().constGet_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_response__binary().constGet_field_client__id().get().get_int();
-				}
+		}
+		case ALT_response__binary -> {
+			if (send_par.constGet_field_response__binary().constGet_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_response__binary().constGet_field_client__id().get().get_int();
 			}
-			case ALT_erronous__msg -> {
-				if (send_par.constGet_field_erronous__msg().get_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_erronous__msg().constGet_field_client__id().get().get_int();
-				}
+		}
+		case ALT_erronous__msg -> {
+			if (send_par.constGet_field_erronous__msg().get_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_erronous__msg().constGet_field_client__id().get().get_int();
 			}
-			default -> throw new TtcnError("Unknown HTTP_Message type to encode and send!");
+		}
+		default -> throw new TtcnError("Unknown HTTP_Message type to encode and send!");
 		}
 
 		f_HTTP_encodeCommon(send_par, snd_buf);
@@ -1137,54 +1157,54 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 		while (chunk_size > 0) {
 			switch (get_line(buffer, line, false)) {
-				//TRUE
-				case 1 -> {
-					log_debug(socket_debugging, test_port_type, test_port_name, "line: <%s>", line.get_value().toString());
-					try {
-						chunk_size = Integer.parseInt(line.get_value().toString(), 16);
-					} catch (NumberFormatException e) {
-						log_debug(socket_debugging, test_port_type, test_port_name, "No chunksize found");
-						body.operator_assign(body.operator_concatenate(new TitanOctetString(line.get_value().toString().getBytes())));
-						chunk_size = 0;
-						decoding_params.error = true;
-					}
-					if (chunk_size == 0) {
-						log_debug(socket_debugging, test_port_type, test_port_name, "chunk_size 0 -> closing chunk");
-						if (get_line(buffer, line, false) == BUFFER_CRLF) {
-							log_debug(socket_debugging, test_port_type, test_port_name, "Trailing \\r\\n ok!");
-						} else {
-							TTCN_Logger.log(Severity.WARNING_UNQUALIFIED, "Trailing \\r\\n after the closing chunk is not present, instead it is <%s>!", line.get_value().toString());
-						}
+			//TRUE
+			case 1 -> {
+				log_debug(socket_debugging, test_port_type, test_port_name, "line: <%s>", line.get_value().toString());
+				try {
+					chunk_size = Integer.parseInt(line.get_value().toString(), 16);
+				} catch (NumberFormatException e) {
+					log_debug(socket_debugging, test_port_type, test_port_name, "No chunksize found");
+					body.operator_assign(body.operator_concatenate(new TitanOctetString(line.get_value().toString().getBytes())));
+					chunk_size = 0;
+					decoding_params.error = true;
+				}
+				if (chunk_size == 0) {
+					log_debug(socket_debugging, test_port_type, test_port_name, "chunk_size 0 -> closing chunk");
+					if (get_line(buffer, line, false) == BUFFER_CRLF) {
+						log_debug(socket_debugging, test_port_type, test_port_name, "Trailing \\r\\n ok!");
 					} else {
-						// chunk_size > 0
-						log_debug(socket_debugging, test_port_type, test_port_name, "processing next chunk, size: %d", chunk_size);
-						if (buffer.get_read_len() < chunk_size) {
-							log_debug(socket_debugging, test_port_type, test_port_name, "chunk size is greater than the buffer length, more data is needed");
-							decoding_params.isMessage = false;
-							chunk_size = 0;
-						}
+						TTCN_Logger.log(Severity.WARNING_UNQUALIFIED, "Trailing \\r\\n after the closing chunk is not present, instead it is <%s>!", line.get_value().toString());
+					}
+				} else {
+					// chunk_size > 0
+					log_debug(socket_debugging, test_port_type, test_port_name, "processing next chunk, size: %d", chunk_size);
+					if (buffer.get_read_len() < chunk_size) {
+						log_debug(socket_debugging, test_port_type, test_port_name, "chunk size is greater than the buffer length, more data is needed");
+						decoding_params.isMessage = false;
+						chunk_size = 0;
 					}
 				}
-				//FALSE
-				case -1 -> {
-					log_debug(socket_debugging, test_port_type, test_port_name, "buffer does not contain a whole line, more data is needed");
-					decoding_params.isMessage = false;
-					chunk_size = 0;
-				}
-				case BUFFER_CRLF -> {
-					log_debug(socket_debugging, test_port_type, test_port_name, "beginning CRLF removed");
-					continue;
-				}
-				case BUFFER_FAIL -> {
-					log_debug(socket_debugging, test_port_type, test_port_name, "BUFFER_FAIL");
-					decoding_params.error = false;
-					chunk_size = 0;
-				}
-				default -> {
-					decoding_params.isMessage = false;
-					chunk_size = 0;
-					log_debug(socket_debugging, test_port_type, test_port_name, "more data is needed");
-				}
+			}
+			//FALSE
+			case -1 -> {
+				log_debug(socket_debugging, test_port_type, test_port_name, "buffer does not contain a whole line, more data is needed");
+				decoding_params.isMessage = false;
+				chunk_size = 0;
+			}
+			case BUFFER_CRLF -> {
+				log_debug(socket_debugging, test_port_type, test_port_name, "beginning CRLF removed");
+				continue;
+			}
+			case BUFFER_FAIL -> {
+				log_debug(socket_debugging, test_port_type, test_port_name, "BUFFER_FAIL");
+				decoding_params.error = false;
+				chunk_size = 0;
+			}
+			default -> {
+				decoding_params.isMessage = false;
+				chunk_size = 0;
+				log_debug(socket_debugging, test_port_type, test_port_name, "more data is needed");
+			}
 			}
 
 			body.operator_assign(body.operator_concatenate(new TitanOctetString(buffer.get_read_data())));
@@ -1272,16 +1292,16 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 */
 	public static void f_setClientId(HTTPmsg__Types.HTTPMessage msg, final int client_id) {
 		switch (msg.get_selection()) {
-			case ALT_request -> msg.get_field_request().get_field_client__id().get().operator_assign(client_id);
-			case ALT_request__binary ->
-					msg.get_field_request__binary().get_field_client__id().get().operator_assign(client_id);
-			case ALT_response -> msg.get_field_response().get_field_client__id().get().operator_assign(client_id);
-			case ALT_response__binary ->
-					msg.get_field_response__binary().get_field_client__id().get().operator_assign(client_id);
-			case ALT_erronous__msg ->
-					msg.get_field_erronous__msg().get_field_client__id().get().operator_assign(client_id);
-			default -> {
-			}
+		case ALT_request -> msg.get_field_request().get_field_client__id().get().operator_assign(client_id);
+		case ALT_request__binary ->
+		msg.get_field_request__binary().get_field_client__id().get().operator_assign(client_id);
+		case ALT_response -> msg.get_field_response().get_field_client__id().get().operator_assign(client_id);
+		case ALT_response__binary ->
+		msg.get_field_response__binary().get_field_client__id().get().operator_assign(client_id);
+		case ALT_erronous__msg ->
+		msg.get_field_erronous__msg().get_field_client__id().get().operator_assign(client_id);
+		default -> {
+		}
 		}
 	}
 
@@ -1323,6 +1343,179 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			TTCN_Logger.log_event_va_list(fmt, args);
 			TTCN_Logger.end_event();
 		}
+	}
+
+	private void create_ssl_socket() {
+		// TODO: Port name
+		ssl_socket = new SSLSocket() {
+			@Override
+			protected void message_incoming(byte[] message_buffer, int length, int client_id) {
+				log_debug("entering HTTPmsg__PT.message_incoming()");
+
+				TTCN_Buffer buf_p = get_buffer(client_id);
+
+				while (buf_p.get_read_len() > 0) {
+					log_debug("HTTPmsg__PT.message_incoming(): decoding next message, len: %d", buf_p.get_read_len());
+					if (!HTTP_decode(buf_p, client_id, false)) {
+						break;
+					}
+				}
+
+				log_debug("leaving HTTPmsg__PT.message_incoming()");
+			}
+
+			@Override
+			protected void listen_port_opened(int port_number) {
+				log_debug("entering HTTPmsg__PT.listen_port_opened(%d)", port_number);
+
+				if (use_notification_ASPs) {
+					HTTPmsg__Types.Listen__result asp = new HTTPmsg__Types.Listen__result();
+					asp.get_field_portnumber().operator_assign(new TitanInteger(port_number));
+					incoming_message(asp);
+				} else if (port_number < 0) {
+					log_error("Cannot listen at port");
+				}
+
+				log_debug("leaving HTTPmsg__PT.listen_port_opened()");
+			}
+
+			@Override
+			protected void client_connection_opened(int client_id) {
+				log_debug("entering HTTPmsg__PT.client_connection_opened(%d)", client_id);
+
+				if (use_notification_ASPs) {
+					HTTPmsg__Types.Connect__result asp = new HTTPmsg__Types.Connect__result();
+					asp.get_field_client__id().operator_assign(new TitanInteger(client_id));
+					incoming_message(asp);
+				} else if (client_id < 0) {
+					log_error("Cannot connect to server");
+				}
+				log_debug("leaving HTTPmsg__PT.client_connection_opened()");
+			}
+
+			@Override
+			protected void Add_Fd_Read_Handler(SelectableChannel fd) {
+				try {
+					Install_Handler(Set.of(abstract_Socket.get_peer(fd, false).tcp_socket), null, 0.0);
+				} catch (IOException e) {
+					log_error("Error during install handlers: %s", e.getMessage());
+				}
+			}
+
+			@Override
+			protected void Add_Fd_Write_Handler(SelectableChannel fd) {
+				try {
+					Install_Handler(null, Set.of(abstract_Socket.get_peer(fd, false).tcp_socket), 0.0);
+				} catch (IOException e) {
+					log_error("Error during install handlers: %s", e.getMessage());
+				}
+			}
+
+			@Override
+			protected void Remove_Fd_Read_Handler(SelectableChannel fd) {
+				Remove_Fd_All_Handlers(fd);
+			}
+
+			@Override
+			protected void Remove_Fd_Write_Handler(SelectableChannel fd) {
+				Remove_Fd_All_Handlers(fd);
+			}
+
+			@Override
+			protected void Remove_Fd_All_Handlers(SelectableChannel fd) {
+				try {
+					TTCN_Snapshot.selector.get().selectNow();
+					Set<SelectionKey> selectedKeys = TTCN_Snapshot.selector.get().selectedKeys();
+					Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
+					while (keyIterator.hasNext()) {
+						SelectionKey selectionKey = keyIterator.next();
+						if (selectionKey.channel().equals(fd)) {
+							selectionKey.cancel();
+						}
+						keyIterator.remove();
+					}
+					TTCN_Snapshot.channelMap.get().remove(fd);
+				} catch (IOException e) {
+					log_error("Error during uninstall handlers: %s", e.getMessage());
+				}
+			}
+
+			@Override
+			protected void Handler_Uninstall() {
+				try {
+					Uninstall_Handler();
+				} catch (IOException e) {
+					log_error("Error during uninstall handlers: %s", e.getMessage());
+				}
+			}
+
+			@Override
+			protected void report_unsent(int client_id, int msg_length, int sent_length, byte[] msg, String error_text) {
+				if (use_send_failed && last_msg != null) {
+					HTTPmsg__Types.Send__failed asp = new HTTPmsg__Types.Send__failed();
+					asp.get_field_msg().operator_assign(last_msg);
+					asp.get_field_already__half__closed().operator_assign(get_peer(client_id, true).tcp_state == TCP_STATES.CLOSE_WAIT);
+
+					incoming_message(asp);
+				}
+			}
+
+			@Override
+			protected void peer_half_closed(SelectableChannel fd) {
+				log_debug("entering HTTPmsg__PT.peer_half_closed(client_id: %s)", fd.toString());
+
+				TTCN_Buffer buf_p = get_peer(fd, false).fd_buff;
+				buf_p.rewind();
+
+				while (buf_p.get_read_len() > 0) {
+					log_debug("HTTPmsg__PT.remove_client(): decoding next message, len: %d", buf_p.get_read_len());
+					if (!HTTP_decode(buf_p, get_clientId_by_fd(fd), true)) {
+						break;
+					}
+				}
+
+				HTTPmsg__Types.Half__close asp = new HTTPmsg__Types.Half__close();
+				asp.get_field_client__id().get().operator_assign(get_clientId_by_fd(fd));
+				incoming_message(asp);
+
+				log_debug("leaving HTTPmsg__PT.peer_disconnected(client_id: %d)", get_clientId_by_fd(fd));
+			}
+
+			@Override
+			protected void peer_connected(int client_id, String host, int port) {
+				log_debug("entering HTTPmsg__PT.peer_connected(%d)", client_id);
+
+				if (use_notification_ASPs) {
+					HTTPmsg__Types.Client__connected asp = new HTTPmsg__Types.Client__connected();
+					asp.get_field_hostname().operator_assign(host);
+					asp.get_field_portnumber().operator_assign(port);
+					asp.get_field_client__id().operator_assign(client_id);
+
+					incoming_message(asp);
+				} else {
+					super.peer_connected(client_id, host, port);
+				}
+
+				log_debug("leaving HTTPmsg__PT.peer_connected()");
+			}
+
+			@Override
+			protected boolean add_user_data(SelectableChannel id) {
+				log_debug("entering HTTPmsg__PT.add_user_data(client_id: %d, use_ssl: %s)", get_clientId_by_fd(id), (adding_client_connection && adding_ssl_connection) || (server_use_ssl && !adding_ssl_connection) ? "yes" : "no");
+				ssl_socket.set_server_mode(!adding_client_connection);
+				if ((adding_client_connection && !adding_ssl_connection) || (!adding_client_connection && !server_use_ssl)) {
+					log_debug("leaving HTTPmsg__PT.add_user_data() with returning Abstract_Socket.add_user_data()");
+					return super.add_user_data(id);
+				} else {
+					log_debug("leaving HTTPmsg__PT.add_user_data() with returning SSL_Socket.add_user_data()");
+					return ssl_socket.add_user_data(id);
+				}
+			}
+
+
+		};
+
+
 	}
 
 	/**
