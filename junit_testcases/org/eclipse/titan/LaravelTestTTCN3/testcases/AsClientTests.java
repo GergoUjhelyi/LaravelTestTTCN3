@@ -26,11 +26,9 @@ public class AsClientTests {
 	@Test
 	public void asClientConstructTest() {
 		System.out.println("=================== as_client_struct class constructor test ===================");
-		byte[] dummyByteArray = { 127, -128, 1, -1 };
 		TTCN_Buffer dummyTTCNBuffer = new TTCN_Buffer();
-		as_client_struct testClient = new as_client_struct(dummyByteArray, dummyTTCNBuffer, null, TCP_STATES.FIN_WAIT, READING_STATES.STATE_NORMAL);
+		as_client_struct testClient = new as_client_struct(null, dummyTTCNBuffer, null, TCP_STATES.FIN_WAIT, READING_STATES.STATE_NORMAL);
 	
-		assertArrayEquals(dummyByteArray, testClient.user_data);
 		assertEquals(dummyTTCNBuffer, testClient.fd_buff);
 		assertNull(testClient.clientAddr);
 		assertEquals(TCP_STATES.FIN_WAIT, testClient.tcp_state);
