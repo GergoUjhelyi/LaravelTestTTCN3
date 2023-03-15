@@ -1273,7 +1273,7 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 * Add user_data to connection. Only needs in HTTPS connection.
+	 * Add user_data to connection. Only needs in SSL connection.
 	 * 
 	 * @param id index of the connection
 	 * @return true if user_data successfully added to connection
@@ -1283,13 +1283,32 @@ public abstract class Abstract_Socket {
 	}
 
 	/**
-	 * Remove user_data to connection. Only needs in HTTPS connection.
+	 * Remove user_data to connection. Only needs in SSL connection.
 	 * 
 	 * @param id index of the connection
 	 * @return true if user_data successfully added to connection
 	 */
 	protected boolean remove_user_data(SelectableChannel id) {
 		return true;
+	}
+	
+	/**
+	 * Set user_data to connection. Only needs in SSL connection.
+	 * 
+	 * @param id index of the connection
+	 * @param uptr universal object, but is should be an SSLEngine
+	 */
+	protected void set_user_data(SelectableChannel id, Object uptr) {
+		get_peer(id, false).user_data = uptr;
+	}
+	
+	/**
+	 * Get user_data to connection. Only needs in SSL connection.
+	 * 
+	 * @param id index of the connection
+	 */
+	protected Object get_user_data(SelectableChannel id) {
+		return get_peer(id, false).user_data;
 	}
 
 	/**
@@ -1504,7 +1523,7 @@ public abstract class Abstract_Socket {
 	 *
 	 */
 	public static class as_client_struct {
-		public byte[] user_data;
+		public Object user_data;
 		public TTCN_Buffer fd_buff;
 		public InetSocketAddress clientAddr;
 		public TCP_STATES tcp_state;
@@ -1519,7 +1538,7 @@ public abstract class Abstract_Socket {
 		/**
 		 * Basic constructor.
 		 */
-		public as_client_struct(byte[] user_data, TTCN_Buffer fd_buff, InetSocketAddress clientAddr, TCP_STATES tcp_state, READING_STATES reading_state) {
+		public as_client_struct(Object user_data, TTCN_Buffer fd_buff, InetSocketAddress clientAddr, TCP_STATES tcp_state, READING_STATES reading_state) {
 			this.user_data = user_data;
 			this.fd_buff = fd_buff;
 			this.clientAddr = clientAddr;
