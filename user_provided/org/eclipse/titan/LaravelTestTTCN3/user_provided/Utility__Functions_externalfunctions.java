@@ -56,7 +56,7 @@ public class Utility__Functions_externalfunctions {
 			TtcnError.TtcnWarning("Empty array given from JSONArray. Return an empty record of!");
 			return new Route__Obj__List(TitanNull_Type.NULL_VALUE);
 		}
-		//Need initialized list inside of the Route__Obj__List object
+		//Need initialized list inside the Route__Obj__List object
 		Route__Obj__List list = new Route__Obj__List(TitanNull_Type.NULL_VALUE);
 		for (int i = 0; i < routesArray.length(); i++) {
 			JSONObject JSONRouteObject = routesArray.getJSONObject(i);
@@ -108,11 +108,10 @@ public class Utility__Functions_externalfunctions {
 		}
 		methodNames.must_bound("methodNames must be a value!");
 		final String methodNameString = methodNames.get_value().toString();
-		final String splitOperator = "|";
-		String[] splittedMethods = methodNameString.split(splitOperator);
+		String[] splitMethods = methodNameString.split("\\|");
 		PREGEN__RECORD__OF__CHARSTRING returnValue = new PREGEN__RECORD__OF__CHARSTRING(TitanNull_Type.NULL_VALUE);
-		for (int i = 0; i < splittedMethods.length; i++) {
-			returnValue.get_at(i).operator_assign(splittedMethods[i]);
+		for (int i = 0; i < splitMethods.length; i++) {
+			returnValue.get_at(i).operator_assign(splitMethods[i]);
 		}
 		return returnValue;
 	}
@@ -137,7 +136,7 @@ public class Utility__Functions_externalfunctions {
 			connection.connect();
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String inputLine;
-			StringBuffer content = new StringBuffer();
+			StringBuilder content = new StringBuilder();
 			while ((inputLine = in.readLine()) != null) {
 				content.append(inputLine);
 			}
@@ -180,7 +179,7 @@ public class Utility__Functions_externalfunctions {
 			connection.connect();
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String inputLine;
-			StringBuffer content = new StringBuffer();
+			StringBuilder content = new StringBuilder();
 			while ((inputLine = in.readLine()) != null) {
 				content.append(inputLine);
 			}
