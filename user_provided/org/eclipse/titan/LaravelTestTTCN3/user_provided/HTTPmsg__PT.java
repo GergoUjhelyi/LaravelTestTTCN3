@@ -34,10 +34,10 @@ import org.eclipse.titan.runtime.core.TitanOctetString;
 import org.eclipse.titan.runtime.core.TtcnError;
 
 /**
- * Main class for the TTCN-3 HTTP test port. Contains all the function you need in a HTTP connection.
- * 
+ * Main class for the TTCN-3 HTTP test port. Contains all the function you need in an HTTP connection.
+ * <p>
  * Almost the same Abstract_Socket used in constructor. In the future it can be reduced to one constructor.
- * Now it needs for C++ compatibility. The reason I choose this solution is because C++ solution uses multiple
+ * Now it needs for C++ compatibility. The reason I choose this solution is that C++ solution uses multiple
  * inheritance.
  * 
  * @author Gergo Ujhelyi
@@ -55,10 +55,10 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 	private boolean use_notification_ASPs;
 
-	private boolean use_send_failed;
-	private HTTPMessage last_msg;
+	private final boolean use_send_failed;
+	private final HTTPMessage last_msg;
 
-	private Abstract_Socket abstract_Socket;
+	private final Abstract_Socket abstract_Socket;
 
 	private static final int BUFFER_FAIL = 2;
 	private static final int BUFFER_CRLF = 3;
@@ -518,10 +518,10 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 */
 	public void set_parameter(String parameter_name, String parameter_value) {
 		abstract_Socket.log_debug("entering HTTPmsg__PT.set_parameter(%s, %s)", parameter_name, parameter_value);
-		if (parameter_name.toLowerCase().equals(USE_NOTIFICATION_ASPS_NAME.toLowerCase())) {
-			if (parameter_value.toLowerCase().equals("yes")) {
+		if (parameter_name.equalsIgnoreCase(USE_NOTIFICATION_ASPS_NAME)) {
+			if (parameter_value.equalsIgnoreCase("yes")) {
 				use_notification_ASPs = true;
-			} else if (parameter_value.toLowerCase().equals("no")) {
+			} else if (parameter_value.equalsIgnoreCase("no")) {
 				use_notification_ASPs = false;
 			} else {
 				abstract_Socket.log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, USE_NOTIFICATION_ASPS_NAME);
@@ -673,33 +673,32 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		int client_id = -1;
 
 		switch (send_par.get_selection()) {
-		case ALT_request:
-			if (send_par.constGet_field_request().constGet_field_client__id().is_present()) {
-				client_id = send_par.constGet_field_request().constGet_field_client__id().get().get_int();
+			case ALT_request -> {
+				if (send_par.constGet_field_request().constGet_field_client__id().is_present()) {
+					client_id = send_par.constGet_field_request().constGet_field_client__id().get().get_int();
+				}
 			}
-			break;
-		case ALT_request__binary:
-			if (send_par.constGet_field_request__binary().constGet_field_client__id().is_present()) {
-				client_id = send_par.constGet_field_request__binary().constGet_field_client__id().get().get_int();
+			case ALT_request__binary -> {
+				if (send_par.constGet_field_request__binary().constGet_field_client__id().is_present()) {
+					client_id = send_par.constGet_field_request__binary().constGet_field_client__id().get().get_int();
+				}
 			}
-			break;
-		case ALT_response:
-			if (send_par.constGet_field_response().constGet_field_client__id().is_present()) {
-				client_id = send_par.constGet_field_response().constGet_field_client__id().get().get_int();
+			case ALT_response -> {
+				if (send_par.constGet_field_response().constGet_field_client__id().is_present()) {
+					client_id = send_par.constGet_field_response().constGet_field_client__id().get().get_int();
+				}
 			}
-			break;
-		case ALT_response__binary:
-			if (send_par.constGet_field_response__binary().constGet_field_client__id().is_present()) {
-				client_id = send_par.constGet_field_response__binary().constGet_field_client__id().get().get_int();
+			case ALT_response__binary -> {
+				if (send_par.constGet_field_response__binary().constGet_field_client__id().is_present()) {
+					client_id = send_par.constGet_field_response__binary().constGet_field_client__id().get().get_int();
+				}
 			}
-			break;
-		case ALT_erronous__msg:
-			if (send_par.constGet_field_erronous__msg().get_field_client__id().is_present()) {
-				client_id = send_par.constGet_field_erronous__msg().constGet_field_client__id().get().get_int();
+			case ALT_erronous__msg -> {
+				if (send_par.constGet_field_erronous__msg().get_field_client__id().is_present()) {
+					client_id = send_par.constGet_field_erronous__msg().constGet_field_client__id().get().get_int();
+				}
 			}
-			break;
-		default:
-			throw new TtcnError("Unknown HTTP_Message type to encode and send!");
+			default -> throw new TtcnError("Unknown HTTP_Message type to encode and send!");
 		}
 
 		f_HTTP_encodeCommon(send_par, snd_buf);
@@ -832,7 +831,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 * @param socket_debugging flag to check debugging is enabled
 	 * @param test_port_type the test port type
 	 * @param test_port_name the test port name
-	 * @return true if the buffer is not empty and it contain valid message
+	 * @return true if the buffer is not empty, and it contains valid message
 	 */
 	public static boolean f_HTTP_decodeCommon(TTCN_Buffer buffer, HTTPMessage msg, final boolean connection_closed, final boolean socket_debugging, final String test_port_type, final String test_port_name) {
 		TTCN_Logger.log(Severity.DEBUG_TESTPORT, "starting f_HTTP_decodeCommon ");
@@ -886,9 +885,9 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				Pattern responsePattern = Pattern.compile(".*(HTTP|http)/(\\d{1})\\.(\\d{1})\\s+(\\d{3})(.*)");
 				Matcher responseMatcher = responsePattern.matcher(cc_first);
 				if (responseMatcher.lookingAt()) {
-					version__major = Integer.valueOf(responseMatcher.group(2));
-					version__minor = Integer.valueOf(responseMatcher.group(3));
-					statusCode = Integer.valueOf(responseMatcher.group(4));
+					version__major = Integer.parseInt(responseMatcher.group(2));
+					version__minor = Integer.parseInt(responseMatcher.group(3));
+					statusCode = Integer.parseInt(responseMatcher.group(4));
 					stext = responseMatcher.group(5).strip();
 				} else {
 					decoding_params.isMessage = false;
@@ -906,8 +905,8 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				Matcher responseMatcherWithRequest = responsePatternWithRequest.matcher(cc_first.substring(pos + 1, cc_first.indexOf("\r\n")));
 				if (responseMatcherWithRequest.lookingAt()) {
 					stext = responseMatcherWithRequest.group(1);
-					version__major = Integer.valueOf(responseMatcherWithRequest.group(3));
-					version__minor = Integer.valueOf(responseMatcherWithRequest.group(4));
+					version__major = Integer.parseInt(responseMatcherWithRequest.group(3));
+					version__minor = Integer.parseInt(responseMatcherWithRequest.group(4));
 				} else {
 					decoding_params.isMessage = false;
 					decoding_params.error = true;
@@ -1048,7 +1047,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 					log_debug(socket_debugging, test_port_type, test_port_name, "+Header line: <%s: %s>", header_name, header_value);
 
 					if (header_name.equalsIgnoreCase("Content-Length")) {
-						decoding_params.content_length = Integer.valueOf(header_value);
+						decoding_params.content_length = Integer.parseInt(header_value);
 						length_received = true;
 					} else if (header_name.equalsIgnoreCase("Connection") && header_value.equalsIgnoreCase("close")) {
 						decoding_params.non_persistent_connection = true;
@@ -1061,7 +1060,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 				continue;
 			case BUFFER_FAIL:
 				log_debug(socket_debugging, test_port_type, test_port_name, "BUFFER_FAIL in HTTP_decode_header!");
-				log_debug(socket_debugging, test_port_type, test_port_name, "whole bufer now: <%s>", Arrays.toString(buffer.get_data()));;
+				log_debug(socket_debugging, test_port_type, test_port_name, "whole buffer now: <%s>", Arrays.toString(buffer.get_data()));;
 				decoding_params.error = true;
 			case -1:
 				decoding_params.isMessage = false;
@@ -1138,52 +1137,54 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 		while (chunk_size > 0) {
 			switch (get_line(buffer, line, false)) {
-			//TRUE
-			case 1:
-				log_debug(socket_debugging, test_port_type, test_port_name, "line: <%s>", line.get_value().toString());
-				try {
-					chunk_size = Integer.parseInt(line.get_value().toString(), 16);
-				} catch (NumberFormatException e) {
-					log_debug(socket_debugging, test_port_type, test_port_name, "No chunksize found");
-					body.operator_assign(body.operator_concatenate(new TitanOctetString(line.get_value().toString().getBytes())));
-					chunk_size = 0;
-					decoding_params.error = true;
-				}
-				if (chunk_size == 0) {
-					log_debug(socket_debugging, test_port_type, test_port_name, "chunk_size 0 -> closing chunk");
-					if (get_line(buffer, line, false) == BUFFER_CRLF) {
-						log_debug(socket_debugging, test_port_type, test_port_name,  "Trailing \\r\\n ok!");
-					} else {
-						TTCN_Logger.log(Severity.WARNING_UNQUALIFIED, "Trailing \\r\\n after the closing chunk is not present, instead it is <%s>!", line.get_value().toString());
-					}
-				} else {
-					// chunk_size > 0
-					log_debug(socket_debugging, test_port_type, test_port_name,  "processing next chunk, size: %d", chunk_size);
-					if (buffer.get_read_len() < chunk_size) {
-						log_debug(socket_debugging, test_port_type, test_port_name,  "chunk size is greater than the buffer length, more data is needed");
-						decoding_params.isMessage = false;
+				//TRUE
+				case 1 -> {
+					log_debug(socket_debugging, test_port_type, test_port_name, "line: <%s>", line.get_value().toString());
+					try {
+						chunk_size = Integer.parseInt(line.get_value().toString(), 16);
+					} catch (NumberFormatException e) {
+						log_debug(socket_debugging, test_port_type, test_port_name, "No chunksize found");
+						body.operator_assign(body.operator_concatenate(new TitanOctetString(line.get_value().toString().getBytes())));
 						chunk_size = 0;
+						decoding_params.error = true;
+					}
+					if (chunk_size == 0) {
+						log_debug(socket_debugging, test_port_type, test_port_name, "chunk_size 0 -> closing chunk");
+						if (get_line(buffer, line, false) == BUFFER_CRLF) {
+							log_debug(socket_debugging, test_port_type, test_port_name, "Trailing \\r\\n ok!");
+						} else {
+							TTCN_Logger.log(Severity.WARNING_UNQUALIFIED, "Trailing \\r\\n after the closing chunk is not present, instead it is <%s>!", line.get_value().toString());
+						}
+					} else {
+						// chunk_size > 0
+						log_debug(socket_debugging, test_port_type, test_port_name, "processing next chunk, size: %d", chunk_size);
+						if (buffer.get_read_len() < chunk_size) {
+							log_debug(socket_debugging, test_port_type, test_port_name, "chunk size is greater than the buffer length, more data is needed");
+							decoding_params.isMessage = false;
+							chunk_size = 0;
+						}
 					}
 				}
-				break;
 				//FALSE
-			case -1:
-				log_debug(socket_debugging, test_port_type, test_port_name,  "buffer does not contain a whole line, more data is needed");
-				decoding_params.isMessage = false;
-				chunk_size = 0;
-				break;
-			case BUFFER_CRLF:
-				log_debug(socket_debugging, test_port_type, test_port_name,  "beginning CRLF removed");
-				continue;
-			case BUFFER_FAIL:
-				log_debug(socket_debugging, test_port_type, test_port_name,  "BUFFER_FAIL");
-				decoding_params.error = false;
-				chunk_size = 0;
-				break;
-			default:
-				decoding_params.isMessage = false;
-				chunk_size = 0;
-				log_debug(socket_debugging, test_port_type, test_port_name,  "more data is needed");
+				case -1 -> {
+					log_debug(socket_debugging, test_port_type, test_port_name, "buffer does not contain a whole line, more data is needed");
+					decoding_params.isMessage = false;
+					chunk_size = 0;
+				}
+				case BUFFER_CRLF -> {
+					log_debug(socket_debugging, test_port_type, test_port_name, "beginning CRLF removed");
+					continue;
+				}
+				case BUFFER_FAIL -> {
+					log_debug(socket_debugging, test_port_type, test_port_name, "BUFFER_FAIL");
+					decoding_params.error = false;
+					chunk_size = 0;
+				}
+				default -> {
+					decoding_params.isMessage = false;
+					chunk_size = 0;
+					log_debug(socket_debugging, test_port_type, test_port_name, "more data is needed");
+				}
 			}
 
 			body.operator_assign(body.operator_concatenate(new TitanOctetString(buffer.get_read_data())));
@@ -1219,7 +1220,9 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		}
 
 		while (true) {
-			for (; i < buffer.get_read_len() && cc_to[i] != '\0' && cc_to[i] != '\r' && cc_to[i] != '\n'; i++) {}
+			while (i < buffer.get_read_len() && cc_to[i] != '\0' && cc_to[i] != '\r' && cc_to[i] != '\n') {
+				i++;
+			}
 
 			if (i >= buffer.get_read_len()) {
 				to = new TitanCharString("");
@@ -1271,23 +1274,16 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 */
 	public static void f_setClientId(HTTPmsg__Types.HTTPMessage msg, final int client_id) {
 		switch (msg.get_selection()) {
-		case ALT_request:
-			msg.get_field_request().get_field_client__id().get().operator_assign(client_id);
-			break;
-		case ALT_request__binary:
-			msg.get_field_request__binary().get_field_client__id().get().operator_assign(client_id);
-			break;
-		case ALT_response:
-			msg.get_field_response().get_field_client__id().get().operator_assign(client_id);
-			break;
-		case ALT_response__binary:
-			msg.get_field_response__binary().get_field_client__id().get().operator_assign(client_id);
-			break;
-		case ALT_erronous__msg:
-			msg.get_field_erronous__msg().get_field_client__id().get().operator_assign(client_id);
-			break;
-		default:
-			break;
+			case ALT_request -> msg.get_field_request().get_field_client__id().get().operator_assign(client_id);
+			case ALT_request__binary ->
+					msg.get_field_request__binary().get_field_client__id().get().operator_assign(client_id);
+			case ALT_response -> msg.get_field_response().get_field_client__id().get().operator_assign(client_id);
+			case ALT_response__binary ->
+					msg.get_field_response__binary().get_field_client__id().get().operator_assign(client_id);
+			case ALT_erronous__msg ->
+					msg.get_field_erronous__msg().get_field_client__id().get().operator_assign(client_id);
+			default -> {
+			}
 		}
 	}
 
@@ -1297,7 +1293,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 * @param buffer what contains the HTTP message in byte format
 	 * @param client_id the client id what connection coming from
 	 * @param connection_closed  flag to check is this the last message
-	 * @return true if the decode was successful
+	 * @return true if to decode was successful
 	 */
 	protected boolean HTTP_decode(final TTCN_Buffer buffer, final int client_id, final boolean connection_closed) {
 		HTTPmsg__Types.HTTPMessage msg = new HTTPMessage();
@@ -1332,7 +1328,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	}
 
 	/**
-	 * Class for extra decoding informations.
+	 * Class for extra decoding information.
 	 * 
 	 * @author Gergo Ujhelyi
 	 *
