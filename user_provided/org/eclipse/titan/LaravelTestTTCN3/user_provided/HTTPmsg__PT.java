@@ -55,7 +55,7 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 	private boolean use_notification_ASPs;
 
-	private final boolean use_send_failed;
+	private boolean use_send_failed;
 	private final HTTPMessage last_msg;
 
 	private final Abstract_Socket abstract_Socket;
@@ -526,7 +526,18 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 			} else {
 				abstract_Socket.log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, USE_NOTIFICATION_ASPS_NAME);
 			}
+		} else if (parameter_name.equalsIgnoreCase("report_failed_message")) {
+			if (parameter_value.equalsIgnoreCase("yes")) {
+				use_send_failed = true;
+			} else if (parameter_value.equalsIgnoreCase("no")) {
+				use_send_failed = false;
+			} else {
+				abstract_Socket.log_error("Parameter value '%s' not recognized for parameter '%s'", parameter_value, "report_failed_message");
+			}
+		} else if (!abstract_Socket.parameter_set(parameter_name, parameter_value)) {
+			abstract_Socket.log_warning("HTTPmsg__PT.set_parameter(): Unsupported Test Port parameter: %s", parameter_name);
 		}
+		abstract_Socket.log_debug("leaving HTTPmsg__PT.set_parameter(%s, %s)", parameter_name, parameter_value);
 	}
 
 	/**
@@ -673,32 +684,32 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 		int client_id = -1;
 
 		switch (send_par.get_selection()) {
-			case ALT_request -> {
-				if (send_par.constGet_field_request().constGet_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_request().constGet_field_client__id().get().get_int();
-				}
+		case ALT_request -> {
+			if (send_par.constGet_field_request().constGet_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_request().constGet_field_client__id().get().get_int();
 			}
-			case ALT_request__binary -> {
-				if (send_par.constGet_field_request__binary().constGet_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_request__binary().constGet_field_client__id().get().get_int();
-				}
+		}
+		case ALT_request__binary -> {
+			if (send_par.constGet_field_request__binary().constGet_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_request__binary().constGet_field_client__id().get().get_int();
 			}
-			case ALT_response -> {
-				if (send_par.constGet_field_response().constGet_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_response().constGet_field_client__id().get().get_int();
-				}
+		}
+		case ALT_response -> {
+			if (send_par.constGet_field_response().constGet_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_response().constGet_field_client__id().get().get_int();
 			}
-			case ALT_response__binary -> {
-				if (send_par.constGet_field_response__binary().constGet_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_response__binary().constGet_field_client__id().get().get_int();
-				}
+		}
+		case ALT_response__binary -> {
+			if (send_par.constGet_field_response__binary().constGet_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_response__binary().constGet_field_client__id().get().get_int();
 			}
-			case ALT_erronous__msg -> {
-				if (send_par.constGet_field_erronous__msg().get_field_client__id().is_present()) {
-					client_id = send_par.constGet_field_erronous__msg().constGet_field_client__id().get().get_int();
-				}
+		}
+		case ALT_erronous__msg -> {
+			if (send_par.constGet_field_erronous__msg().get_field_client__id().is_present()) {
+				client_id = send_par.constGet_field_erronous__msg().constGet_field_client__id().get().get_int();
 			}
-			default -> throw new TtcnError("Unknown HTTP_Message type to encode and send!");
+		}
+		default -> throw new TtcnError("Unknown HTTP_Message type to encode and send!");
 		}
 
 		f_HTTP_encodeCommon(send_par, snd_buf);
@@ -1137,54 +1148,54 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 
 		while (chunk_size > 0) {
 			switch (get_line(buffer, line, false)) {
-				//TRUE
-				case 1 -> {
-					log_debug(socket_debugging, test_port_type, test_port_name, "line: <%s>", line.get_value().toString());
-					try {
-						chunk_size = Integer.parseInt(line.get_value().toString(), 16);
-					} catch (NumberFormatException e) {
-						log_debug(socket_debugging, test_port_type, test_port_name, "No chunksize found");
-						body.operator_assign(body.operator_concatenate(new TitanOctetString(line.get_value().toString().getBytes())));
-						chunk_size = 0;
-						decoding_params.error = true;
-					}
-					if (chunk_size == 0) {
-						log_debug(socket_debugging, test_port_type, test_port_name, "chunk_size 0 -> closing chunk");
-						if (get_line(buffer, line, false) == BUFFER_CRLF) {
-							log_debug(socket_debugging, test_port_type, test_port_name, "Trailing \\r\\n ok!");
-						} else {
-							TTCN_Logger.log(Severity.WARNING_UNQUALIFIED, "Trailing \\r\\n after the closing chunk is not present, instead it is <%s>!", line.get_value().toString());
-						}
+			//TRUE
+			case 1 -> {
+				log_debug(socket_debugging, test_port_type, test_port_name, "line: <%s>", line.get_value().toString());
+				try {
+					chunk_size = Integer.parseInt(line.get_value().toString(), 16);
+				} catch (NumberFormatException e) {
+					log_debug(socket_debugging, test_port_type, test_port_name, "No chunksize found");
+					body.operator_assign(body.operator_concatenate(new TitanOctetString(line.get_value().toString().getBytes())));
+					chunk_size = 0;
+					decoding_params.error = true;
+				}
+				if (chunk_size == 0) {
+					log_debug(socket_debugging, test_port_type, test_port_name, "chunk_size 0 -> closing chunk");
+					if (get_line(buffer, line, false) == BUFFER_CRLF) {
+						log_debug(socket_debugging, test_port_type, test_port_name, "Trailing \\r\\n ok!");
 					} else {
-						// chunk_size > 0
-						log_debug(socket_debugging, test_port_type, test_port_name, "processing next chunk, size: %d", chunk_size);
-						if (buffer.get_read_len() < chunk_size) {
-							log_debug(socket_debugging, test_port_type, test_port_name, "chunk size is greater than the buffer length, more data is needed");
-							decoding_params.isMessage = false;
-							chunk_size = 0;
-						}
+						TTCN_Logger.log(Severity.WARNING_UNQUALIFIED, "Trailing \\r\\n after the closing chunk is not present, instead it is <%s>!", line.get_value().toString());
+					}
+				} else {
+					// chunk_size > 0
+					log_debug(socket_debugging, test_port_type, test_port_name, "processing next chunk, size: %d", chunk_size);
+					if (buffer.get_read_len() < chunk_size) {
+						log_debug(socket_debugging, test_port_type, test_port_name, "chunk size is greater than the buffer length, more data is needed");
+						decoding_params.isMessage = false;
+						chunk_size = 0;
 					}
 				}
-				//FALSE
-				case -1 -> {
-					log_debug(socket_debugging, test_port_type, test_port_name, "buffer does not contain a whole line, more data is needed");
-					decoding_params.isMessage = false;
-					chunk_size = 0;
-				}
-				case BUFFER_CRLF -> {
-					log_debug(socket_debugging, test_port_type, test_port_name, "beginning CRLF removed");
-					continue;
-				}
-				case BUFFER_FAIL -> {
-					log_debug(socket_debugging, test_port_type, test_port_name, "BUFFER_FAIL");
-					decoding_params.error = false;
-					chunk_size = 0;
-				}
-				default -> {
-					decoding_params.isMessage = false;
-					chunk_size = 0;
-					log_debug(socket_debugging, test_port_type, test_port_name, "more data is needed");
-				}
+			}
+			//FALSE
+			case -1 -> {
+				log_debug(socket_debugging, test_port_type, test_port_name, "buffer does not contain a whole line, more data is needed");
+				decoding_params.isMessage = false;
+				chunk_size = 0;
+			}
+			case BUFFER_CRLF -> {
+				log_debug(socket_debugging, test_port_type, test_port_name, "beginning CRLF removed");
+				continue;
+			}
+			case BUFFER_FAIL -> {
+				log_debug(socket_debugging, test_port_type, test_port_name, "BUFFER_FAIL");
+				decoding_params.error = false;
+				chunk_size = 0;
+			}
+			default -> {
+				decoding_params.isMessage = false;
+				chunk_size = 0;
+				log_debug(socket_debugging, test_port_type, test_port_name, "more data is needed");
+			}
 			}
 
 			body.operator_assign(body.operator_concatenate(new TitanOctetString(buffer.get_read_data())));
@@ -1274,16 +1285,16 @@ public class HTTPmsg__PT extends HTTPmsg__PT_BASE {
 	 */
 	public static void f_setClientId(HTTPmsg__Types.HTTPMessage msg, final int client_id) {
 		switch (msg.get_selection()) {
-			case ALT_request -> msg.get_field_request().get_field_client__id().get().operator_assign(client_id);
-			case ALT_request__binary ->
-					msg.get_field_request__binary().get_field_client__id().get().operator_assign(client_id);
-			case ALT_response -> msg.get_field_response().get_field_client__id().get().operator_assign(client_id);
-			case ALT_response__binary ->
-					msg.get_field_response__binary().get_field_client__id().get().operator_assign(client_id);
-			case ALT_erronous__msg ->
-					msg.get_field_erronous__msg().get_field_client__id().get().operator_assign(client_id);
-			default -> {
-			}
+		case ALT_request -> msg.get_field_request().get_field_client__id().get().operator_assign(client_id);
+		case ALT_request__binary ->
+		msg.get_field_request__binary().get_field_client__id().get().operator_assign(client_id);
+		case ALT_response -> msg.get_field_response().get_field_client__id().get().operator_assign(client_id);
+		case ALT_response__binary ->
+		msg.get_field_response__binary().get_field_client__id().get().operator_assign(client_id);
+		case ALT_erronous__msg ->
+		msg.get_field_erronous__msg().get_field_client__id().get().operator_assign(client_id);
+		default -> {
+		}
 		}
 	}
 
