@@ -12,3 +12,7 @@ routes.json
 
 ## Cache directory
 /.cache
+
+/.settings
+
+/.idea
